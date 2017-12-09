@@ -1,0 +1,265 @@
+version: "2"
+services:
+  db:
+    image: quay.io/apiant/apiant-db:SYSTEM_VERSION
+    environment:
+      # You can use a different value if desired
+      - MYSQL_ROOT_PASSWORD=root123
+      
+      # You can use a different value if desired
+      # Must match the value in APIANT_MYSQL_USER below
+      - MYSQL_USER=apiant
+      
+      # You can use a different value if desired
+      # Must match the value in APIANT_MYSQL_PASS below
+      - MYSQL_PASSWORD=apiant123
+      
+      # "APIANT" is recommended as the database name
+      # Must match the value in APIANT_MYSQL_DATABASE below
+      - MYSQL_DATABASE=APIANT
+    volumes:
+      - /home/data/apiant/mysql:/var/lib/mysql
+      
+  webapp:
+    image: quay.io/apiant/apiant-webapp:SYSTEM_VERSION
+    environment:
+      # ----------------------------------------------------------------------------------------------------------------------
+      # This section of environment variables define the database connection, typically to the database instance defined above
+      # ----------------------------------------------------------------------------------------------------------------------
+          # Don't change this
+          - APIANT_MYSQL_HOST=db
+          
+          # You can use a different value if desired
+          # Must match the value in MYSQL_USER above
+          - APIANT_MYSQL_USER=apiant
+          
+          # You can use a different value if desired
+          # Must match the value in MYSQL_PASSWORD above
+          - APIANT_MYSQL_PASS=apiant123
+          
+          # You can use a different value if desired
+          # Must match the value in MYSQL_DATABASE above
+          - APIANT_MYSQL_DATABASE=APIANT
+      # ----------------------------------------------------------------------------------------------------------------------
+      
+      # ----------------------------------------------------------------------------------------------------------------------
+      # This section of environment variables are required system settings that must be provided by you
+      # The system will not operate without these
+      # ----------------------------------------------------------------------------------------------------------------------
+          # The license key you have been provided.
+          # Either a license key or an evaluation license key is required.
+          - APIANT_LICENSE=
+          
+          # An evaluation license key, if you have been provided one.
+          # Either a license key or an evaluation license key is required.
+          - APIANT_EVALUATION=
+          
+          # The IP address of the server
+          - APIANT_IP_ADDRESS=
+          
+          # The domain and optional port to reach the server.  Must include http:// or https:// e.g. https://mydomain.com
+          - APIANT_DOMAIN=http://localhost:8080
+      # ----------------------------------------------------------------------------------------------------------------------
+
+      # ----------------------------------------------------------------------------------------------------------------------
+      # This section of environment variables are for outbound email delivery.
+      # If no outbound email delivery mechanism is configured, the system will use bare Java Email API's, which typically
+      # results in emails ending up in spam due to no DKIM/SPF signing, depending on if the destination domain matches the
+      # the system's domain or not.
+      # ----------------------------------------------------------------------------------------------------------------------
+          # The "from" email address for outbound system emails  
+          - APIANT_SMTP_SYSTEM_FROM_ADDRESS=
+          # The sender name for outbound system emails
+          - APIANT_SMTP_SYSTEM_FROM_NAME=
+          
+          # Configure for typical SMTP servers
+          # Enter the server address for outbound SMTP
+          - APIANT_SMTP_STANDARD_HOST=
+          # Enter the SMTP port number, the default is 25
+          - APIANT_SMTP_STANDARD_PORT=
+          # Enter true to connect to the SMTP server using SSL.  The default is false
+          - APIANT_SMTP_STANDARD_IS_SSL=
+          # optional, enter if the SMTP server requires authentication
+          - APIANT_SMTP_STANDARD_USERNAME=
+          # optional, enter if the SMTP server requires authentication
+          - APIANT_SMTP_STANDARD_PASSWORD=
+          
+          # Configure to use Amazon SES for outbound email
+          # If an Access Key is entered, Amazon Simple E-mail Service is used instead of any configured SMTP server
+          - APIANT_SMTP_AMAZON_SES_ACCESS_KEY=
+          - APIANT_SMTP_AMAZON_SES_SECRET_KEY=
+          # optional, leave empty for default or use this format: email.us-west-2.amazonaws.com
+          - APIANT_SMTP_AMAZON_SES_HOST
+          
+          # Configure to use ElasticEmail.com for outbound email
+          # If an API Key is entered, elasticemail.com is used instead of any configured SMTP server 
+          - APIANT_SMTP_ELASTICEMAIL_ACCOUNT=
+          - APIANT_SMTP_ELASTICEMAIL_API_KEY=
+             
+          # The sys admin's name
+          - APIANT_ADMIN_NAME=
+          
+          # The sys admin's e-mail address.  Will receive system alert emails.
+          - APIANT_ADMIN_EMAIL=          
+      # ----------------------------------------------------------------------------------------------------------------------
+      
+      # ----------------------------------------------------------------------------------------------------------------------
+      # This section of environment variables are settings that will vary based upon the amount of available server RAM
+      # ----------------------------------------------------------------------------------------------------------------------
+          # The minimum amount of heap memory Tomcat will allocate when it starts.
+          - TOMCAT_HEAP_MIN=2048m
+          
+          # The maximum amount of heap memory Tomcat can allocate.
+          # This plus the amount of memory allocated to MySQL (default is 500MB) must be lower than the amount of available RAM
+          - TOMCAT_HEAP_MAX=3500m
+                    
+          # The server will execute concurrent server-side assemblies and automations in separate Java threads
+          # Each Java thread's memory consumption varies depending on the data being processed
+          # New threads are only spawned when concurrent requests are received
+          # If all threads are busy, requests are queued      
+          - APIANT_NATIVE_WORK_QUEUE_MAX_THREADS=10
+      
+          # An automation will be terminated if the Tomcat free memory is below this value, -1 for infinite
+          - APIANT_MIN_FREE_MEMORY_MB=250
+          
+          # The system admin will receive an email alert if the free Tomcat memory dips below this threshold
+          # Only a single alert email is sent, until the system is rebooted
+          # Enter zero to disable
+          - APIANT_MIN_FREE_MEMORY_ALERT_MB=250
+      # ----------------------------------------------------------------------------------------------------------------------
+      
+      # ----------------------------------------------------------------------------------------------------------------------
+      # This section of environment variables are either optional or have sensible default values
+      # ----------------------------------------------------------------------------------------------------------------------
+          # This is the tomcat context to append to the APIANT_DOMAIN URL, e.g. https://localhost:8080/context
+          # If no Tomcat context path is configured, leave this empty
+          - APIANT_CONTEXT=
+          
+          # If running on a LAN that uses a proxy server to access the Internet
+          - APIANT_PROXY_HOST=
+          # The port is required if a host is specified
+          - APIANT_PROXY_PORT=
+          - APIANT_PROXY_USERNAME=
+          - APIANT_PROXY_PASSWORD=
+          
+          # True enables debug output into tomcat.log
+          - APIANT_LOGGING_IS_DEBUG_OUTPUT_ENABLED=false
+          
+          # The maximum amount of data logged into any single automation or batch job log file
+          - APIANT_LOGGING_MAX_LOGFILE_SIZE_MB=250
+          
+          # Configure to store generated automation & batch job logs in Amazon S3 
+          - APIANT_AMAZON_S3_ACCESS_KEY=
+          - APIANT_AMAZON_S3_SECRET_KEY=
+          # S3 Region, e.g. us-west-2
+          - APIANT_AMAZON_S3_REGION=
+          - APIANT_AMAZON_S3_BUCKET=
+          
+          # If this is a Development Server, enter one or more production server URL's, e.g. https://mydomain.com
+          - APIANT_PRODUCTION_SERVER_URL=
+          
+          # The system has a Google Talk service that can be used to build interactive automations
+          - APIANT_GOOGLE_TALK_USERNAME=
+          - APIANT_GOOGLE_TALK_PASSWORD=
+          
+          # The system has a Jabber service that can be used to build interactive automations
+          # The Jabber server to use, e.g. jabber.at
+          - APIANT_JABBER_SERVER=
+          - APIANT_JABBER_USERNAME=
+          - APIANT_JABBER_PASSWORD=
+          
+          # The maximum number of concurrent HTTP connections
+          - APIANT_MAX_HTTP_CONNECTIONS=500
+          
+          # The maximum amount of data in MB that can be loaded from HTTP responses, -1 for infinite
+          - APIANT_MAX_HTTP_DATA_MB=100
+          
+          # The number of seconds to wait for a socket response before timing out, zero for infinite
+          - APIANT_SOCKET_TIMEOUT_SECONDS=3600
+          
+          # The amount of time in seconds to wait before logging a long transaction to {TOMCAT_HOME}/logs/LongTransactions.log
+          - APIANT_LOG_LONG_TRANSACTION_TIME_SECONDS=30
+          
+          # Limits how much data is returned to the browser for queries against the system's Simple DB data storage
+          - APIANT_MAX_SIMPLE_DB_RESULT_CHUNKS=100
+          
+          # Enter the URL location (can be relative to the application root) of stdout.log, if the system is configured to make it accessible
+          - APIANT_STDOUT_LOG=
+          
+          # Enter the URL location (can be relative to the application root) of webhooks.log, if the system is configured to make it accessible
+          - APIANT_WEBHOOKS_LOG=
+          
+          # If this limit is reached, all running threads are terminated and the Java Engine restarts itself
+          - APIANT_NATIVE_WORK_QUEUE_MAX_QUEUED_THREADS=100
+          
+          # If true, new accounts can be created
+          - APIANT_NEW_ACCOUNT_CREATION_IS_NEW_ACCOUNT_CREATION_ALLOWED=true
+          
+          # If true, the system will generate the initial password for new accounts.  If false, end users can choose their own password
+          - APIANT_NEW_ACCOUNT_CREATION_IS_INITIAL_PASSWORD_SYSTEM_GENERATED=false
+          
+          # The cron schedule to prune the database of data flagged for deletion
+          - APIANT_CRON_PRUNE_DATABASE=0 3 * * *
+          
+          # The cron schedule to prune the schedulers of stale automations and batch jobs
+          - APIANT_CRON_PRUNE_SCHEDULERS=0 4 * * *
+          
+          # The system is continously generating tomcat temp files when JSP's are compiled that need to be pruned
+          - APIANT_CRON_PURGE_TEMP_JSP_FILES=1 5 * * *
+          
+          # The cron schedule to delete unused webhooks (due to abandoning automation creation, or when automations are deleted) from remote API's
+          - APIANT_CRON_PURGE_DANGLING_WEBHOOKS=30 * * * *
+          
+          # The cron schedule to refresh cached data feeds
+          - APIANT_CRON_REFRESH_CACHED_FEEDS=*/5 * * * *
+          
+          # The number of seconds any single module can take to process before the automation engine times out, zero for infinite
+          - APIANT_MODULE_TIMEOUT_SECONDS=0
+          
+          # The number of seconds any server assembly can take to process before it times out, zero for infinite
+          - APIANT_SERVER_ASSEMBLY_TIMEOUT_SECONDS=300
+          
+          # The number of seconds any automation can take to process before it times out, zero for infinite
+          - APIANT_AUTOMATION_TIMEOUT_SECONDS=600
+          
+          # The number of seconds any JSP can take to process before it times out, zero for infinite
+          - APIANT_JSP_TIMEOUT_SECONDS=600
+          
+          # The maximum age of automation logs to keep, leave empty for no maximum
+          - APIANT_MAX_AUTOMATION_LOG_AGE_DAYS=90
+          
+          # The maximum age of batch job logs to keep, leave empty for no maximum
+          - APIANT_MAX_BATCH_JOB_LOG_AGE_DAYS=90
+          
+          # If true, end users can sign into the system using popular OAuth social apps
+          - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_IS_ENABLED=false
+          # If true, Facebook OAuth API keys must be loaded into the system
+          - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_HAS_FACEBOOK=false
+          # If true, Google OAuth API keys must be loaded into the system
+          - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_HAS_GOOGLE=false
+          # If true, Twitter OAuth API keys must be loaded into the system
+          - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_HAS_TWITTER=false
+          
+          # If true, visitors can browse around the automation editor, but not create automations.  If false, the automation editor can only be accessed by signing in first
+          - APIANT_IS_ANONYMOUS_AUTOMATION_EDITOR_ACCESS_ALLOWED=true
+          
+          # The number of days to wait after an account is closed before purging it from the database (and all associated data related to the account)
+          # Enter -1 to disable purging
+          - APIANT_PURGE_CLOSED_ACCOUNTS_AFTER_DAYS=-1
+          
+          # If true, the editor web pages won't display the .html extension in the browser URL
+          - APIANT_IS_REMOVING_HTML_EXTENSION=false
+          
+          # If true, the admin will receive an email whenever a user signs into the system
+          - APIANT_ADMIN_IS_EMAILED_ON_ALL_LOGINS=false
+      # ----------------------------------------------------------------------------------------------------------------------
+      
+    links:
+      - db
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/data/apiant/appLogs:/usr/local/tomcat/webapps/apiant/appLogs
+      - /home/data/apiant/appModules:/usr/local/tomcat/webapps/apiant/appModules
+      - /home/data/apiant/build:/usr/local/tomcat/webapps/apiant/build
+      - /home/data/apiant/WEB-INF/classes/appModules:/usr/local/tomcat/webapps/apiant/WEB-INF/classes/appModules
