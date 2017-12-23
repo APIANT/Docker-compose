@@ -1,49 +1,51 @@
-1. When data rows are filtered, the automation execution engine no longer stores unused data in the database about the data row, to reduce database storage of filtered data by about 50%.
+1. Fixed an issue introduced in v6.04 where if a polling automation with multiple actions experienced an error in any but the last action the transaction would be retried over and over each time the automation executed.
 
-2. Baseline assemblies that used old techniques for obtaining the location of the system's temp directory and temp directory URL have been refactored to use the output from the System Info module.
+2. Fixed the counting of the current record number being processed in logged messages "Executing action #X for trigger data row Y of Z" (where the value of Y was wrong, sometimes greater than Z).
 
-3. Fixed an issue when connecting the Date Time system app or when saving automations when the "let me define a schedule" option was selected where the Date Time timezone selection dialog was empty.
+3. Fixed an issue with saving actions having validated entries in the automation editor, where the editor would hang while displaying message "validating your entries".
 
-4. Fixed an issue where an automation could not process its Daily Schedule b/c the XML had surrounding apostrophes after being edited.
+4. Fixed a seemingly isolated issue where an Extension - Server-Side Script module in a subassembly nested within a Loop module could not access data streams being passed into it, resulting in empty XML being placed into DATASTREAM replacements within the code.
 
-5. Fixed runtime errors with the SFTP triggers caused by selecting "." as the server's directory to watch for new/updated files.
+5. SSO (Single Sign-On) via SAML has been integrated into the system.
 
-6. Fixed a runtime error that would occur in the VTD-XML parser when an assembly having a module with a nested subassembly was run on the server.
+6. The docker-compose.yml file has new environment variables to configure SSO via CAS and SAML.  Search the file for "SSO" to find the new variables.
 
-7. The Craigslist "new post from search" trigger has been updated so it works once again.
+7. Storify is shutting down May 16, 2018, so all assemblies have been marked as private and deprecated.  Existing automations will continue to run until Storify turns off their API.
 
-8. The "Stocks" app and its triggers have been removed b/c Yahoo has terminated its data feed.
+8. The admin console's User Accounts screen has a new button "Reset Task Count" to reset the account's monthly tasks total back to zero.
 
-9. The GoToAssist, GoToMeeting, GoToTraining, and GoToWebinar integrations have all been migrated to use their new API endpoint URLs.
+9. If a Conditional branch within an automation has no actions, when the automation executes and the empty branch is executed now the trigger data row is marked as processed and the next trigger data row is processed, rather than the automation execution being immediately halted.
 
-10. In the automation editor's dashboard, "daily schedules" for automations have been renamed to "execution windows" to better reflect their functionality.  Also added a reset link at the bottom of the execution window popover to reset all execution windows to their default values.
+10. When clicking the Execute Assembly link in the assembly editor, the output data information area at the bottom left is now cleared rather than possibly showing output data from an assembly that is not selected.
 
-11. Fixed an issue that would cause the icon picker dialogs in the assembly editor to not display all available images.
+11. Fixed an issue when importing a batch of automations such that automation references in "execute automation" and "turn automation on/off" actions are now correctly updated.
 
-12. When a timeout occurs while fetching data when configuring triggers/actions in the automation editor, the error message now simply displays "Timed out while fetching data, please retry." rather than a message that includes the usually long and messy URL.
+12. When a batch of automations is deployed, multiple "execute automation" and "turn automation on/off" actions witin automations now have all references updated, rather than just the first action being updated.
 
-13. The "Switch Account" dialog now has a button at the bottom to switch back to the original account, which will appear after switching to an account.
+13. When automations are deployed or imported, they are now placed into the same folder names as configured in the source account.
 
-14. The "Switch Account" dialog now has a selection dropdown that appears if the system has at least one tenant, for choosing among tenant organizations.
+14. Automation imports (via an uploaded automation export file) that take longer than 30 seconds will now run to completion.
 
-15. When running an automation manually in the automation editor, the prompt to choose the execution mode of normal/test/export now displays help text underneath each option, rather than in a mouseover tooltip.
+15. After uploading an uploaded automation export file of automations to import, the system now prompts to ask if existing automations should be updated, or if new automations will be created regardless if they already exist.
 
-16. Fixed a rare issue that would prevent multiple accounts from being connected to apps that used OAuth, when the app assembly contained a subassembly that used Service Credentials modules or OAuth modules.
+16. When importing automations with the new "update if exists" option, if the existing automations are owned by another account the system will display a message after the import completes indicating which accounts own the existing automations.
 
-17. Fixed an issue where field mappings within Conditional logic were appearing as "Action #null" when deployed to other accounts.
+17. When an automation is imported and it doesn't already already exist in the system, the system will no longer attempt to associate the automation with an account having the same email address as the account used to export the automation.  All imported automations that get created are now associated with the account performing the import.
 
-18. If an Action Output module has static output fields defined, any dynamic output fields having the same names as any static fields are no longer duplicated in the list of mappable output fields in the automation editor.
+18. Fixed an issue with the Switch Account dialog such that the organization doesn't have to be reselected each time in order for the switch account to work in multi-tenant systems.
 
-19. Bulk exports and imports of multiple automations are now supported.  Bulk exports are performed via a new "Export all" button that appears in the automation editor's dashboard for accounts that have permission to export.  The button exports all currently selected automations.
+19. The automation editor's Account -> Settings popover has been redesigned.
 
-20. When automations are imported, the System "execute automation" & "turn automation on/off" actions are now updated to reference the appropriate automations, if they exist in the system.
+20. A new setting has been added to the automation editor's Account -> Settings popover to control the frequency at which automations can send email alerts.  Three options are available: Immediately, Hourly, and Daily.  If Hourly or Daily are selected, a single email digest is sent that contains all the alerts during that time period.  Duplicate alerts are not repeated in the digest email b/c the system will indicate how many occurrences of the email alert have happened.
 
-21. Bulk deployments of multiple automations are now supported.  Bulk deployments are performed via a new "Deploy all" button that appears in the automation editor's dashboard for accounts that have permission to deploy automations.  The button deploys all currently selected automations.
+21. A new setting has been added to the automation editor's Account -> Settings popover to specify one or more email addresses to receive automation alerts.  One or more emails can be entered separated by commas that will receive automation email alerts.  If empty (the default), the account's email is used instead.
 
-22. When automations are deployed in bulk, the System "execute automation" & "turn automation on/off" actions are now updated to reference the appropriate automations, if they exist in the batch of automations being deployed.
+22. A new "AMA Administrator" permission has been added for AMA tenant systems.  Accounts with this permission will receive email alerts from all automations in all accounts within the AMA tenant system.  The behavior of items #20 and #21 above apply for the AMA Administrator accounts, such that AMA admins can control which email addresses receive the alerts at the specified frequency.
 
-23. When actions are edited in the automation editor, conditionals having logic that reference the edited actions's output fields are now updated.  Previously the referenced fields would become invalid and show "Action #x null".
+23. When a polling automation is created and saved in the off state, the system no longer executes the automation.  This initial execution when saved was for the purpose of loading the database with the initial trigger data row identifiers.  Now, when the automation is turned on the first time the automation runs will result in the loading of the initial trigger data row identifiers (resulting in no data being processed).  The reason for the change is for the case when the automation is created in the off state but not turned on for a length of time that would result in a flood of processing when it is eventually turned on.
 
-24. Actions in the automation editor now have radio buttons in their settings that controls error handling behavior.  The default is to halt the execution at that point so no subsequent actions process the trigger data row, which is the system's current behavior.  A new option is to continue excecution.  All actions now output an "action error message" data field.  If an action results in an error, that data field will contain the error message.  Conditional logic can be used to branch upon the value of the action error message in order to perform specialized error handling processing.
+24. The performance of fetching data for the automation history pages has been greatly improved.
 
-25. The right side of conditional decision logic in the automation editor can now have data-mapped fields.
+25. A "new or updated customer" trigger and a "new order" trigger have been added for Square.
+
+26. Whitepages Pro has been integrated with a "business lookup" action and a "reverse address search for phone" action. 

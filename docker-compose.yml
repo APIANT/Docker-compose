@@ -232,6 +232,7 @@ services:
           - APIANT_MAX_BATCH_JOB_LOG_AGE_DAYS=90
           
           # If true, end users can sign into the system using popular OAuth social apps
+          # Ignored if SSO (Single Sign-On) is enabled
           - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_IS_ENABLED=false
           # If true, Facebook OAuth API keys must be loaded into the system
           - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_HAS_FACEBOOK=false
@@ -240,7 +241,48 @@ services:
           # If true, Twitter OAuth API keys must be loaded into the system
           - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_HAS_TWITTER=false
           
+          # The system supports Single Sign-On (SSO) using either a Central Authentication Service (CAS) or SAML
+          # Only one can be enabled
+          - APIANT_SSO_CAS_IS_ENABLED=false
+          
+          # Set to the URL of the CAS server
+          # Required if CAS is enabled
+          - APIANT_SSO_CAS_URL=
+
+          # The system supports Single Sign-On (SSO) using either a Central Authentication Service (CAS) or SAML
+          # Only one can be enabled
+          - APIANT_SSO_SAML_IS_ENABLED=false
+          
+          # The Entity ID of the SAML Identity Provider 
+          # Required if SAML is enabled
+          - APIANT_SSO_SAML_IDP_ENTITY_ID=
+          
+          # The the Single Sign-On (SSO) URL for the SAML Identity Provider (IdP) 
+          # Required if SAML is enabled
+          - APIANT_SSO_SAML_IDP_SSO_URL=
+          
+          # The the Single Logout (SLO) URL for the SAML Identity Provider (IdP)
+          # Optional.  If not provided, no SLO will be performed
+          - APIANT_SSO_SAML_IDP_SLO_URL=
+          
+          # The the X509 certificate for the SAML Identity Provider (IdP)
+          # Required if SAML is enabled.  Enter on a single line, remove all line breaks
+          - APIANT_SSO_SAML_IDP_X509_CERT=
+          
+          # The name of the attribute that contains the user's first name from the SAML Identity Provider (IdP)
+          # Optional
+          - APIANT_SSO_SAML_IDP_ATTR_FIRST_NAME=User.FirstName
+          
+          # The name of the attribute that contains the user's last name from the SAML Identity Provider (IdP)
+          # Optional
+          - APIANT_SSO_SAML_IDP_ATTR_LAST_NAME=User.LastName
+          
+          # The name of the attribute that contains the user's email from the SAML Identity Provider (IdP)
+          # Optional
+          - APIANT_SSO_SAML_IDP_ATTR_EMAIL=User.email
+          
           # If true, visitors can browse around the automation editor, but not create automations.  If false, the automation editor can only be accessed by signing in first
+          # Ignored if SSO (Single Sign-On) is enabled
           - APIANT_IS_ANONYMOUS_AUTOMATION_EDITOR_ACCESS_ALLOWED=true
           
           # The number of days to wait after an account is closed before purging it from the database (and all associated data related to the account)
