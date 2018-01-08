@@ -1,51 +1,17 @@
-1. Fixed an issue introduced in v6.04 where if a polling automation with multiple actions experienced an error in any but the last action the transaction would be retried over and over each time the automation executed.
+1. Fixed an issue that would cause the System Info module to emit empty values for <tmpDirectory> and <tmpDirectoryURL> after a system upgrade or after the Apply Changes button was clicked in the Admin Console's Settings page.
 
-2. Fixed the counting of the current record number being processed in logged messages "Executing action #X for trigger data row Y of Z" (where the value of Y was wrong, sometimes greater than Z).
+2. It is now possible to sign in to an account in the Assembly Editor via the Account menu when signed out.
 
-3. Fixed an issue with saving actions having validated entries in the automation editor, where the editor would hang while displaying message "validating your entries".
+3. Baseline "v1" modules in the Assembly Editor previously used a preceding "$" to denote literal string values when entered or wired into data path dropdown controls.  New baseline "v2" modules are now being introduced that reverse this behavior.  Instead of literal string values needing a preceding "$", it is the data paths that need a preceding "xpath:" to indicate that the value is to be treated as a data path.  Data path dropdown controls within new v2 modules will now precede all available data paths with "xpath:" in their dropdown lists.  Baseline v1 modules are being deprecated and marked private.  Assemblies that use these deprecated modules will continue to work as before.  Baseline v1 modules that have been replaced with new v2 versions are the following:  XML Builder, XML Row Builder, JSON Builder, JSON Array Builder, Simple DB INSERT, Simple DB SELECT, Simple DB DELETE, Data Rows - Loop, Conditional Loop, Conditional Execution [Data Stream], Mutex Semaphore, Iterator, Fetch Paginated Results - Breadcrumbs, Fetch Paginated Results - Iterator, Action Two-Way Sync, and Subassembly Output (Sync Action).
 
-4. Fixed a seemingly isolated issue where an Extension - Server-Side Script module in a subassembly nested within a Loop module could not access data streams being passed into it, resulting in empty XML being placed into DATASTREAM replacements within the code.
+4. The new v2 version of the XML Builder and XML Row Builder modules will now automatically wrap values with CDATA when formatted as <node>VALX</node>.
 
-5. SSO (Single Sign-On) via SAML has been integrated into the system.
+5. The Conditional Loop module has been renamed to Data Rows - Conditional Loop.
 
-6. The docker-compose.yml file has new environment variables to configure SSO via CAS and SAML.  Search the file for "SSO" to find the new variables.
+6. The info area at the lower left of the Assembly Editor now uses the Stream Inspector's 3rd-party code editor to display data instead of a standard browser text view.  This results in the info area displaying data raw without the browser automatically translating certain characters and escape sequences.
 
-7. Storify is shutting down May 16, 2018, so all assemblies have been marked as private and deprecated.  Existing automations will continue to run until Storify turns off their API.
+7. The help info for the Email module in the assembly editor has been updated.
 
-8. The admin console's User Accounts screen has a new button "Reset Task Count" to reset the account's monthly tasks total back to zero.
+8. The default location for wire labels in the Assembly Editor is now underneath the source module's output node(s), rather than being placed in the middle of the wire.  This helps to avoid wire labels being positioned in locations overlapping or behind modules.
 
-9. If a Conditional branch within an automation has no actions, when the automation executes and the empty branch is executed now the trigger data row is marked as processed and the next trigger data row is processed, rather than the automation execution being immediately halted.
-
-10. When clicking the Execute Assembly link in the assembly editor, the output data information area at the bottom left is now cleared rather than possibly showing output data from an assembly that is not selected.
-
-11. Fixed an issue when importing a batch of automations such that automation references in "execute automation" and "turn automation on/off" actions are now correctly updated.
-
-12. When a batch of automations is deployed, multiple "execute automation" and "turn automation on/off" actions witin automations now have all references updated, rather than just the first action being updated.
-
-13. When automations are deployed or imported, they are now placed into the same folder names as configured in the source account.
-
-14. Automation imports (via an uploaded automation export file) that take longer than 30 seconds will now run to completion.
-
-15. After uploading an uploaded automation export file of automations to import, the system now prompts to ask if existing automations should be updated, or if new automations will be created regardless if they already exist.
-
-16. When importing automations with the new "update if exists" option, if the existing automations are owned by another account the system will display a message after the import completes indicating which accounts own the existing automations.
-
-17. When an automation is imported and it doesn't already already exist in the system, the system will no longer attempt to associate the automation with an account having the same email address as the account used to export the automation.  All imported automations that get created are now associated with the account performing the import.
-
-18. Fixed an issue with the Switch Account dialog such that the organization doesn't have to be reselected each time in order for the switch account to work in multi-tenant systems.
-
-19. The automation editor's Account -> Settings popover has been redesigned.
-
-20. A new setting has been added to the automation editor's Account -> Settings popover to control the frequency at which automations can send email alerts.  Three options are available: Immediately, Hourly, and Daily.  If Hourly or Daily are selected, a single email digest is sent that contains all the alerts during that time period.  Duplicate alerts are not repeated in the digest email b/c the system will indicate how many occurrences of the email alert have happened.
-
-21. A new setting has been added to the automation editor's Account -> Settings popover to specify one or more email addresses to receive automation alerts.  One or more emails can be entered separated by commas that will receive automation email alerts.  If empty (the default), the account's email is used instead.
-
-22. A new "AMA Administrator" permission has been added for AMA tenant systems.  Accounts with this permission will receive email alerts from all automations in all accounts within the AMA tenant system.  The behavior of items #20 and #21 above apply for the AMA Administrator accounts, such that AMA admins can control which email addresses receive the alerts at the specified frequency.
-
-23. When a polling automation is created and saved in the off state, the system no longer executes the automation.  This initial execution when saved was for the purpose of loading the database with the initial trigger data row identifiers.  Now, when the automation is turned on the first time the automation runs will result in the loading of the initial trigger data row identifiers (resulting in no data being processed).  The reason for the change is for the case when the automation is created in the off state but not turned on for a length of time that would result in a flood of processing when it is eventually turned on.
-
-24. The performance of fetching data for the automation history pages has been greatly improved.
-
-25. A "new or updated customer" trigger and a "new order" trigger have been added for Square.
-
-26. Whitepages Pro has been integrated with a "business lookup" action and a "reverse address search for phone" action. 
+9. Baseline assemblies have been updated to use the System Info module instead of hardcoding the system's name.
