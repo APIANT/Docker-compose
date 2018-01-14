@@ -1,17 +1,7 @@
-1. Fixed an issue that would cause the System Info module to emit empty values for <tmpDirectory> and <tmpDirectoryURL> after a system upgrade or after the Apply Changes button was clicked in the Admin Console's Settings page.
+1. When saving an app assembly in the Assembly Editor, the owner of the app assembly will see a new "Protected" checkbox underneath the app category dropdown.  If checked, no other user accounts can add or edit triggers or actions for the app, unless they have the Assembly Administrator permission.
 
-2. It is now possible to sign in to an account in the Assembly Editor via the Account menu when signed out.
+2. Fixed an issue where the "Error Handling -> Send an email on any timeout" gear menu option in the automation editor dashboard was not displaying the checkmark when the option was enabled.
 
-3. Baseline "v1" modules in the Assembly Editor previously used a preceding "$" to denote literal string values when entered or wired into data path dropdown controls.  New baseline "v2" modules are now being introduced that reverse this behavior.  Instead of literal string values needing a preceding "$", it is the data paths that need a preceding "xpath:" to indicate that the value is to be treated as a data path.  Data path dropdown controls within new v2 modules will now precede all available data paths with "xpath:" in their dropdown lists.  Baseline v1 modules are being deprecated and marked private.  Assemblies that use these deprecated modules will continue to work as before.  Baseline v1 modules that have been replaced with new v2 versions are the following:  XML Builder, XML Row Builder, JSON Builder, JSON Array Builder, Simple DB INSERT, Simple DB SELECT, Simple DB DELETE, Data Rows - Loop, Conditional Loop, Conditional Execution [Data Stream], Mutex Semaphore, Iterator, Fetch Paginated Results - Breadcrumbs, Fetch Paginated Results - Iterator, Action Two-Way Sync, and Subassembly Output (Sync Action).
+3. Fixed an issue that prevented data path dropdowns in the assembly editor modules from being populated, even though data was loaded into the modules.
 
-4. The new v2 version of the XML Builder and XML Row Builder modules will now automatically wrap values with CDATA when formatted as <node>VALX</node>.
-
-5. The Conditional Loop module has been renamed to Data Rows - Conditional Loop.
-
-6. The info area at the lower left of the Assembly Editor now uses the Stream Inspector's 3rd-party code editor to display data instead of a standard browser text view.  This results in the info area displaying data raw without the browser automatically translating certain characters and escape sequences.
-
-7. The help info for the Email module in the assembly editor has been updated.
-
-8. The default location for wire labels in the Assembly Editor is now underneath the source module's output node(s), rather than being placed in the middle of the wire.  This helps to avoid wire labels being positioned in locations overlapping or behind modules.
-
-9. Baseline assemblies have been updated to use the System Info module instead of hardcoding the system's name.
+4. Fixed the movement of focus when form elements are tabbed such that a disabled control is skipped.

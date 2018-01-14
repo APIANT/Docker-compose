@@ -189,9 +189,6 @@ services:
           # Enter the URL location (can be relative to the application root) of webhooks.log, if the system is configured to make it accessible
           - APIANT_WEBHOOKS_LOG=
           
-          # If this limit is reached, all running threads are terminated and the Java Engine restarts itself
-          - APIANT_NATIVE_WORK_QUEUE_MAX_QUEUED_THREADS=100
-          
           # If true, new accounts can be created
           - APIANT_NEW_ACCOUNT_CREATION_IS_NEW_ACCOUNT_CREATION_ALLOWED=true
           
