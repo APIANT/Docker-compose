@@ -1,7 +1,17 @@
-1. When saving an app assembly in the Assembly Editor, the owner of the app assembly will see a new "Protected" checkbox underneath the app category dropdown.  If checked, no other user accounts can add or edit triggers or actions for the app, unless they have the Assembly Administrator permission.
+1. The "move to folder" functionality accessibly via the gear icon in the automation editor's dashboard now provides the option to move automations to the "All" folder.
 
-2. Fixed an issue where the "Error Handling -> Send an email on any timeout" gear menu option in the automation editor dashboard was not displaying the checkmark when the option was enabled.
+2. Admins using the switch account functionality will now cause the selected account's "last access time" to be updated, so functionality that depends on that value will work as expected.
 
-3. Fixed an issue that prevented data path dropdowns in the assembly editor modules from being populated, even though data was loaded into the modules.
+3. Fixed a null pointer exception that could occur when displaying the Connections page in the automation editor.
 
-4. Fixed the movement of focus when form elements are tabbed such that a disabled control is skipped.
+4. Fixed the "cannot selectNodes() on an empty element" error message that was displayed when saving an assembly with an account other than the account that created the assembly in the assembly editor.
+
+5. Fixed an issue with the recently introduced v2 modules where nested modules were still receiving a preceding "$" in front of wired literal values.
+
+6. FullContact has been integrated with a "find person" action and a "find company" action.
+
+7. Dropdown list controls in the automation editor's trigger configuration and action configuration panels now have a search entry field at their top for searching the contents of the lists.
+
+8. Dropdown list controls in the assembly editor that contain data paths in modules, lists of app names, and category lists in the save assembly dialog all now have a search entry field at their top for searching the contents of the lists.
+
+9. Timezone dropdown list controls now have a search entry field at their top.
