@@ -183,12 +183,6 @@ services:
           # Limits how much data is returned to the browser for queries against the system's Simple DB data storage
           - APIANT_MAX_SIMPLE_DB_RESULT_CHUNKS=100
           
-          # Enter the URL location (can be relative to the application root) of stdout.log, if the system is configured to make it accessible
-          - APIANT_STDOUT_LOG=
-          
-          # Enter the URL location (can be relative to the application root) of webhooks.log, if the system is configured to make it accessible
-          - APIANT_WEBHOOKS_LOG=
-          
           # If true, new accounts can be created
           - APIANT_NEW_ACCOUNT_CREATION_IS_NEW_ACCOUNT_CREATION_ALLOWED=true
           

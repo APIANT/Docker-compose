@@ -1,17 +1,27 @@
-1. The "move to folder" functionality accessibly via the gear icon in the automation editor's dashboard now provides the option to move automations to the "All" folder.
+1. The Subassembly Input module in the assembly editor now displays the data stream number to the left of each defined data stream.
 
-2. Admins using the switch account functionality will now cause the selected account's "last access time" to be updated, so functionality that depends on that value will work as expected.
+2. When an automation invokes another automation via the "execute automation" system action, the history page for the invoked automation will now display its execution status and allow the invoked automation's processing to be manually halted.
 
-3. Fixed a null pointer exception that could occur when displaying the Connections page in the automation editor.
+3. Automation timeout alert emails are now sent according to email digest settings, rather than always being sent immediately.
 
-4. Fixed the "cannot selectNodes() on an empty element" error message that was displayed when saving an assembly with an account other than the account that created the assembly in the assembly editor.
+4. Fixed the YouTube "new video in channel" trigger.
 
-5. Fixed an issue with the recently introduced v2 modules where nested modules were still receiving a preceding "$" in front of wired literal values.
+5. The list of automation action error messages that will cause failed trigger data rows to be automatically retried up to 3 times is now configurable in the system's config file, rather than being hardcoded.
 
-6. FullContact has been integrated with a "find person" action and a "find company" action.
+6. Fixed an issue where dropdown lists would sometimes not appear when opened.
 
-7. Dropdown list controls in the automation editor's trigger configuration and action configuration panels now have a search entry field at their top for searching the contents of the lists.
+7. Fixed an issue where sometimes the arrow at the top/bottom of dropdown lists would not be positioned correctly, such that it was not attached to the list.
 
-8. Dropdown list controls in the assembly editor that contain data paths in modules, lists of app names, and category lists in the save assembly dialog all now have a search entry field at their top for searching the contents of the lists.
+8. The search field is now focused when searchable dropdown lists are opened, so that search text can immediately be entered.
 
-9. Timezone dropdown list controls now have a search entry field at their top.
+9. Searchable dropdown lists no longer change their height or position when search text is entered and results are filtered.
+
+10. The search field no longer appears in dropdown lists that are too narrow to fully display the search field.
+
+11. System.out.println() within Java JSP code in Extension - Server-Side Script modules is now written to trace logs that are private to each developer account.  The developer menu in the assembly editor has menu links renamed from "stdout.log" to "trace log".  All trace logs are erased by the system at bootup whenever the system is started.
+
+12. The webhook log is stored in a different location (now under appServerOutput rather than tomcat's log directory) and its filename is now randomly generated when the system boots, to avoid unauthorized access.  The log is empty each time the system boots at startup.  Previous webhook logs are erased each time the system boots at startup.
+
+13. The /config/server/stdout_log and /config/server/webhooks_log parameters in config.xml have been removed.
+
+14. The APIANT_STDOUT_LOG and APIANT_WEBHOOKS_LOG environment variables have been removed from the baseline docker compose file.
