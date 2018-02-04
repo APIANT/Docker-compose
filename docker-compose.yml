@@ -23,6 +23,16 @@ services:
   webapp:
     image: quay.io/apiant/apiant-webapp:SYSTEM_VERSION
     environment:
+    
+      # ----------------------------------------------------------------------------------------------------------------------
+      # This section of environment variables define Tomcat settings
+      # ----------------------------------------------------------------------------------------------------------------------
+          # The minimum amount of Tomcat heap space
+          - TOMCAT_HEAP_MIN=2048m
+
+          # The maximum amount of Tomcat heap space
+          - TOMCAT_HEAP_MAX=4096m
+    
       # ----------------------------------------------------------------------------------------------------------------------
       # This section of environment variables define the database connection, typically to the database instance defined above
       # ----------------------------------------------------------------------------------------------------------------------

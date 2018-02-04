@@ -1,27 +1,29 @@
-1. The Subassembly Input module in the assembly editor now displays the data stream number to the left of each defined data stream.
+1. Module imports now update the privacy setting.
 
-2. When an automation invokes another automation via the "execute automation" system action, the history page for the invoked automation will now display its execution status and allow the invoked automation's processing to be manually halted.
+2. Modules that were previously deprecated are now private and not publicly accessible.
 
-3. Automation timeout alert emails are now sent according to email digest settings, rather than always being sent immediately.
+3. Assembly imports will no longer place assemblies into the anonymous user account; instead, they will be placed into the sysadmin account.
 
-4. Fixed the YouTube "new video in channel" trigger.
+4. Twitter actions that post tweets now replace the @ character with a #, rather than stripping it.
 
-5. The list of automation action error messages that will cause failed trigger data rows to be automatically retried up to 3 times is now configurable in the system's config file, rather than being hardcoded.
+5. The dropdown list control no longer displays the animated focus selection when an item has been selected and the list closes.
 
-6. Fixed an issue where dropdown lists would sometimes not appear when opened.
+6. "Connection has been closed" has been added as a retryable automation error.
 
-7. Fixed an issue where sometimes the arrow at the top/bottom of dropdown lists would not be positioned correctly, such that it was not attached to the list.
+7. When edited in the automation editor, automations now display the latest available app icons that have been saved in the system.
 
-8. The search field is now focused when searchable dropdown lists are opened, so that search text can immediately be entered.
+8. Fixed an infrequent hang that could occur in the native work queue's processing of automations that would happen when an automation was running and a request was made to run the automation again.
 
-9. Searchable dropdown lists no longer change their height or position when search text is entered and results are filtered.
+9. If an automation makes an API call that returns a 401 Unauthorized error, the automation is turned off, an entry is written into the automation's history about the system turning off the automation, and an email alert is sent to the automation's owner and system administrator.  The app account is no longer disconnected by the system.
 
-10. The search field no longer appears in dropdown lists that are too narrow to fully display the search field.
+10. The "New free trial user account (instant)" system trigger has been renamed to "New signup for plan (instant)".
 
-11. System.out.println() within Java JSP code in Extension - Server-Side Script modules is now written to trace logs that are private to each developer account.  The developer menu in the assembly editor has menu links renamed from "stdout.log" to "trace log".  All trace logs are erased by the system at bootup whenever the system is started.
+11. In the assembly editor, after modules having wires with black labels are copied and pasted the pasted black labels are now owned by the same modules as before, such that the pasted labels are positioned the same and move the same when modules are moved.
 
-12. The webhook log is stored in a different location (now under appServerOutput rather than tomcat's log directory) and its filename is now randomly generated when the system boots, to avoid unauthorized access.  The log is empty each time the system boots at startup.  Previous webhook logs are erased each time the system boots at startup.
+12. Microsoft Excel Online has been integrated.
 
-13. The /config/server/stdout_log and /config/server/webhooks_log parameters in config.xml have been removed.
+13. The data path dropdown list in the "Select Single Data Value" popover that appears when wiring data streams into scalar value nodes in the assembly editor is now searchable.
 
-14. The APIANT_STDOUT_LOG and APIANT_WEBHOOKS_LOG environment variables have been removed from the baseline docker compose file.
+14. When an assembly diagram is loaded in the assembly editor, the "Assembly diagram version" above the diagram now shows "Latest version" rather than the date/time the assembly was created, which is not necessarily the date/time of the latest version.
+
+15. Automation debug logs now include assembly version information before trigger and action assemblies are executed.  The version information includes the date/time of the last edit, the person who made the edit, and the description about the edit.
