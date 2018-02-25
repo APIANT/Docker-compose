@@ -1,9 +1,25 @@
-1. The system's config file can now be configured with a list of API's that should be ignored if they return a 401 error message such that the automation won't be automatically turned off, since some API's return a 401 to mean something other than the account credentials are no longer valid.  Previously the system only had Tumblr's API hardcoded as being the only one to ignore if it returned a 401.
+1. Fixed an issue in the automation editor such that when configuring the Feed "create RSS feed" action the "Obtain your feed URL" now appears.
 
-2. Automation alert emails no longer contain the automation's name in the email subject.  Instead, the automation name now appears in the first line of the email's body.
+2. Clover Network has been integrated.
 
-3. All automation alert emails now include the account name in the email subject when sent to system admins.
+3. PrestaShop has been integrated.
 
-4. When an assembly is open in the Assembly Editor with no unsaved changes and a version is selected from the Versions menu, the system now prompts to choose to either open the diagram or to compare differences between the two versions.  Choosing to compare the differences will place the open assembly into read-only mode and the other diagram will be loaded.  Differences between the 2 diagrams will be highlighted.  A slider at the top of the editor allows the opacity to be blended between the 2 versions.  Modules containing scrollable text fields with the pencil edit icon, such as inlined Java/PHP code or XML/JSON templates, will open in a new "diff" view with differences in lines highlighted.
+4. Fixed an issue with the automation execution engine where if an automation was constructed with a Conditional as the last item and the last executed branch of that Conditional contained no actions, the automation would process the very first trigger data row again rather than processing the next data row in sequence, causing an infinite loop.
 
-5. The Webhook module will now throw an error if no configuration instructions are entered when no Webhook URL is specified.
+5. The automation execution engine now takes into account trigger data row filtering when reporting the total trigger data rows being processed, rather than reporting all data rows emitted by the trigger prior to filtering being applied.
+
+6. The Gmail "new email in inbox" and "new email labeled" triggers now emit a "To" field, containing the email receiver's name.
+
+7. System upgrades can now append new nodes to the system's config.xml file.
+
+8. In the Assembly Editor, the module right-click click context menu "Enable/disable debug output" has been renamed to "Enable/disable debug logging".  
+
+9. Modules in the Assembly Editor now show a "DEBUG LOGGING DISABLED" message at their top when debug logging has been disabled, rather than changing their backgrounds to a white color.
+
+10. When comparing assembly versions in the Assembly Editor, the "More settings" hyperlink in submodules is now highlighted when submodule settings are different.
+
+11. In the Assembly Editor, when radio buttons within modules are not selected their associated controls are now disabled.
+
+12. The docker-compose.yml file now includes two new environment variables APIANT_SSO_SAML_IDP_X509_CERT and APIANT_SSO_SAML_IDP_PRIVATE_KEY.  If these have values, the APIANT SAML service provider will sign requests to the Identity Provider (IdP).
+
+13. The Assembly Editor Guide at https://apiant.com/docs/APIANT_Assembly_Editor_Guide.pdf has been refreshed and now includes sections about assembly versioning and assembly version comparisons.  

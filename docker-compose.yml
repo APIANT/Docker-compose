@@ -116,13 +116,6 @@ services:
       # ----------------------------------------------------------------------------------------------------------------------
       # This section of environment variables are settings that will vary based upon the amount of available server RAM
       # ----------------------------------------------------------------------------------------------------------------------
-          # The minimum amount of heap memory Tomcat will allocate when it starts.
-          - TOMCAT_HEAP_MIN=2048m
-          
-          # The maximum amount of heap memory Tomcat can allocate.
-          # This plus the amount of memory allocated to MySQL (default is 500MB) must be lower than the amount of available RAM
-          - TOMCAT_HEAP_MAX=3500m
-                    
           # The server will execute concurrent server-side assemblies and automations in separate Java threads
           # Each Java thread's memory consumption varies depending on the data being processed
           # New threads are only spawned when concurrent requests are received
@@ -253,6 +246,16 @@ services:
           # The system supports Single Sign-On (SSO) using either a Central Authentication Service (CAS) or SAML
           # Only one can be enabled
           - APIANT_SSO_SAML_IS_ENABLED=false
+          
+          # The the X509 certificate for the APIANT service provider
+          # Optional.  If a value is provided, APIANT will sign requests made to the Identity Provider (IdP)
+          # Enter on a single line, remove all line breaks
+          - APIANT_SSO_SAML_SP_X509_CERT=
+          
+          # The the private key for the APIANT service provider
+          # Optional.  If a value is provided, APIANT will sign requests made to the Identity Provider (IdP)
+          # Enter on a single line, remove all line breaks
+          - APIANT_SSO_SAML_SP_PRIVATE_KEY=
           
           # The Entity ID of the SAML Identity Provider 
           # Required if SAML is enabled
