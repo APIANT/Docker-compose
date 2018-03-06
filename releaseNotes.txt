@@ -1,25 +1,17 @@
-1. Fixed an issue in the automation editor such that when configuring the Feed "create RSS feed" action the "Obtain your feed URL" now appears.
+1. Fixed the Utility - Keyvalue Value module to avoid a runtime error when the key value doesn't exist.
 
-2. Clover Network has been integrated.
+2. Fixed an issue such that when an Action assembly is used as a module within another assembly (e.g. by dragging the Action out of the catalog and dropping into an assembly) action inputs having wired values will now receive the wired values instead of receiving an empty value.  This only affected Action assemblies having an Action Output module.
 
-3. PrestaShop has been integrated.
+3. If the system is configured to have free trial accounts for a configured number of days, the automation editor's dashboard will now show the number of days remaining in the free trial.
 
-4. Fixed an issue with the automation execution engine where if an automation was constructed with a Conditional as the last item and the last executed branch of that Conditional contained no actions, the automation would process the very first trigger data row again rather than processing the next data row in sequence, causing an infinite loop.
+4. Added a system ping web service assembly that can be used by external monitors by invoking it at APIANT_DOMAIN/appExec?tenant_uuid=&person_uuid=949a30e32ddd441489f772393f356437&assembly_uuid=0391ed0c4fdc43768db0ff4a8ef330c3
 
-5. The automation execution engine now takes into account trigger data row filtering when reporting the total trigger data rows being processed, rather than reporting all data rows emitted by the trigger prior to filtering being applied.
+5. Accounts having permission to access the Admin Console have a new button that appears at the bottom of the Switch Account dialog that allows them to switch to the admin account.  This is especoally needed for systems configured to use SSO or SAML in that there is no other way to access the admin account in the automation editor or assembly editor.
 
-6. The Gmail "new email in inbox" and "new email labeled" triggers now emit a "To" field, containing the email receiver's name.
+6. The system now cleans up any dangling automation log files on the server's filesystem and on Amazon S3 based upon the maximum allowed log age whenever automation log pruning is performed.
 
-7. System upgrades can now append new nodes to the system's config.xml file.
+7. If an API call returns no response data, the system now reports a "No response" error message rather than "Unexpected response".
 
-8. In the Assembly Editor, the module right-click click context menu "Enable/disable debug output" has been renamed to "Enable/disable debug logging".  
+8. When a failed transaction is retried from the automation history screen, the "retry mode" selection prompt now displays details about each option onscreen underneath each radio button, rather than in tooltips for the radio buttons.
 
-9. Modules in the Assembly Editor now show a "DEBUG LOGGING DISABLED" message at their top when debug logging has been disabled, rather than changing their backgrounds to a white color.
-
-10. When comparing assembly versions in the Assembly Editor, the "More settings" hyperlink in submodules is now highlighted when submodule settings are different.
-
-11. In the Assembly Editor, when radio buttons within modules are not selected their associated controls are now disabled.
-
-12. The docker-compose.yml file now includes two new environment variables APIANT_SSO_SAML_IDP_X509_CERT and APIANT_SSO_SAML_IDP_PRIVATE_KEY.  If these have values, the APIANT SAML service provider will sign requests to the Identity Provider (IdP).
-
-13. The Assembly Editor Guide at https://apiant.com/docs/APIANT_Assembly_Editor_Guide.pdf has been refreshed and now includes sections about assembly versioning and assembly version comparisons.  
+9. When the "Errors" filter is selected in an automation's history screen, a "Retry All" button now appears at the top right that will retry all retryable errored transactions selected by the entered search criteria.
