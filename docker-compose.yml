@@ -195,6 +195,9 @@ services:
           # The cron schedule to prune the database of data flagged for deletion
           - APIANT_CRON_PRUNE_DATABASE=0 3 * * *
           
+          # The number of days to retain deleted content in the database, -1 for no limit
+          - APIANT_PRUNE_DATABASE_DELETED_CONTENT_AFTER_DAYS=-1
+          
           # The cron schedule to prune the schedulers of stale automations and batch jobs
           - APIANT_CRON_PRUNE_SCHEDULERS=0 4 * * *
           

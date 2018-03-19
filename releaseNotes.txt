@@ -1,17 +1,15 @@
-1. Fixed the Utility - Keyvalue Value module to avoid a runtime error when the key value doesn't exist.
+1. Debug logs now write the assembly name as the first element of any message, rather than than the engine id.  Automation debug logs now include the trigger or action step number in each written message.
 
-2. Fixed an issue such that when an Action assembly is used as a module within another assembly (e.g. by dragging the Action out of the catalog and dropping into an assembly) action inputs having wired values will now receive the wired values instead of receiving an empty value.  This only affected Action assemblies having an Action Output module.
+2. Fixed Gmail triggers so they can support attachments having ampersands in their filenames.
 
-3. If the system is configured to have free trial accounts for a configured number of days, the automation editor's dashboard will now show the number of days remaining in the free trial.
+3. System upgrade functionality that modifies the system's config settings now only executes once when system upgrades are installed, primarily to avoid creating duplicate entries.
 
-4. Added a system ping web service assembly that can be used by external monitors by invoking it at APIANT_DOMAIN/appExec?tenant_uuid=&person_uuid=949a30e32ddd441489f772393f356437&assembly_uuid=0391ed0c4fdc43768db0ff4a8ef330c3
+4. When templates are first turned on after being deployed to a customer's account, any settings the automation may have will now appear listed in a dialog window.  Any populated dropdowns will initially be empty.  The customer must make selections for any populated dropdowns and save the settings before the automation can be turned on.
 
-5. Accounts having permission to access the Admin Console have a new button that appears at the bottom of the Switch Account dialog that allows them to switch to the admin account.  This is especoally needed for systems configured to use SSO or SAML in that there is no other way to access the admin account in the automation editor or assembly editor.
+5. Added a <pruneDatabaseDeletedContentAfterDays> system config parameter to control how long deleted content remains in the database.  The default setting is -1 for no limit, which is different behavior from the system's previous hardcoded limit of 30 days.
 
-6. The system now cleans up any dangling automation log files on the server's filesystem and on Amazon S3 based upon the maximum allowed log age whenever automation log pruning is performed.
+6. Added a APIANT_PRUNE_DATABASE_DELETED_CONTENT_AFTER_DAYS environment variable to the baseline docker-compose.yml for controlling the <pruneDatabaseDeletedContentAfterDays> system config setting.
 
-7. If an API call returns no response data, the system now reports a "No response" error message rather than "Unexpected response".
+7. Added a "get client by id" action, "get sale by id" action, and "get product by id" action for MINDBODY.
 
-8. When a failed transaction is retried from the automation history screen, the "retry mode" selection prompt now displays details about each option onscreen underneath each radio button, rather than in tooltips for the radio buttons.
-
-9. When the "Errors" filter is selected in an automation's history screen, a "Retry All" button now appears at the top right that will retry all retryable errored transactions selected by the entered search criteria.
+8. Added an "updated contact" trigger, "add contact to list" action, and "remove contact from list" action for HubSpot.
