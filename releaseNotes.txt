@@ -1,15 +1,5 @@
-1. Debug logs now write the assembly name as the first element of any message, rather than than the engine id.  Automation debug logs now include the trigger or action step number in each written message.
+1. When saving assemblies and selecting icons, the system's catalog of icons is now searchable.
 
-2. Fixed Gmail triggers so they can support attachments having ampersands in their filenames.
+2. The "Text Default if Empty" module will now create the destination node if it does not exist, so long as the immediate parent node does exist.
 
-3. System upgrade functionality that modifies the system's config settings now only executes once when system upgrades are installed, primarily to avoid creating duplicate entries.
-
-4. When templates are first turned on after being deployed to a customer's account, any settings the automation may have will now appear listed in a dialog window.  Any populated dropdowns will initially be empty.  The customer must make selections for any populated dropdowns and save the settings before the automation can be turned on.
-
-5. Added a <pruneDatabaseDeletedContentAfterDays> system config parameter to control how long deleted content remains in the database.  The default setting is -1 for no limit, which is different behavior from the system's previous hardcoded limit of 30 days.
-
-6. Added a APIANT_PRUNE_DATABASE_DELETED_CONTENT_AFTER_DAYS environment variable to the baseline docker-compose.yml for controlling the <pruneDatabaseDeletedContentAfterDays> system config setting.
-
-7. Added a "get client by id" action, "get sale by id" action, and "get product by id" action for MINDBODY.
-
-8. Added an "updated contact" trigger, "add contact to list" action, and "remove contact from list" action for HubSpot.
+3. The system can now perform its license key check to the license server at apiant.com, which was modified on 3/23/18 to use an SSL certificate from Let's Encrypt.
