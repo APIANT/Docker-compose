@@ -1,5 +1,39 @@
-1. When saving assemblies and selecting icons, the system's catalog of icons is now searchable.
+1. The "Utility - Pause" module now has an entry field to specify milliseconds to pause.
 
-2. The "Text Default if Empty" module will now create the destination node if it does not exist, so long as the immediate parent node does exist.
+2. The Simple DB SELECT, INSERT, and DELETE modules can now be configured with an optional automation scope UUID.
 
-3. The system can now perform its license key check to the license server at apiant.com, which was modified on 3/23/18 to use an SSL certificate from Let's Encrypt.
+3. Fixed the "Data Rows - Count Subnodes" module so the "Modify data stream(s)" option works correctly. 
+
+4. The "Write to log" module has been renamed to "Logging - Write to Log" and enhanced with functionality to write to a temporary log with a specified name.  Temporary logs are purged the next time the system is restarted.
+
+5. Added a "Logging - Erase Temporary Log" module that erases a temporary log created by the "Logging - Write to Log" module.
+
+6. The "Utility - Long Text" module has been renamed to "Text Value", so it is listed beside other text processing modules in the assembly editor catalog.
+
+7. Added "Global Value - Set Value" and "Global Value - Get Value" modules that store and retrieve values globally in the scope of an executing assembly.  These are helpful for accessing data across multiple nested subassemblies as an assembly executes.
+
+8. Developer trace logs are now automatically purged if they grow larger than 250MB.
+
+9. System.out.println() within inlined Java JSP code is now written to automation debug logs when the assembly runs within an automation.  System.out.println() continues to write to the developer's trace log when assemblies are run in the assembly editor or outside of automations.
+
+10. Accounts with the "Assembly Developer" or "Switch Account" permissions will see a new "View database dump" menu option from automation gear icons in the automation editor's dashboard.  The menu item opens a new browser window that dumps out Simple DB data stored by the automation, including trigger row identifiers for polling triggers and two-way sync data.
+
+11. Automatic system retries of automation errors is now disabled when automations are run manually in the Export mode.
+
+12. Development servers can now be configured to publish content to multiple production servers.
+
+13. When content is published to production, a new dialog appears that lets multiple production servers be selected.  If a single production server is selected, one or more tenant accounts can be selected.
+
+14. The Goo.gl integration has been deprecated b/c Google is shutting down the service this year.
+
+15. The system has a new <maxQueuedRetries> config setting that controls the maximum size of the system's retry queue for failed transactions (transactions that report any error listed in the <retryableAutomationErrors> config setting).  A new docker-compose.yml environment variable named APIANT_NATIVE_WORK_QUEUE_MAX_QUEUED_RETRIES controls this setting.  The default is 250 if not specified.
+
+16. Fixed an issue with the "Text Default if Empty" module's server-side implementation where even though logs would indicate that new nodes with default values were added successfully, the output data stream would not contain the newly added nodes when another module received the data stream as seen when the subsequent module would log its input data stream(s).
+
+17. The "Subscription Plans" page in the Admin Console is now only visible for cloud-hosted systems.
+
+18. The "Subscription Plans" page in the Admin Console has been redesigned to make it easier to use, performant, and able to modify all available settings related to subscription plans for cloud-hosted systems.
+
+19. The "Settings" page in the Admin Console now supports many more additional system configuration settings.
+
+20. Added support for APIANT_PRODUCTION_SERVER_URLS, APIANT_RETRYABLE_AUTOMATION_ERRORS, and APIANT_IGNORE_AUTOMATION_401 environment variables in docker-compose.yml.

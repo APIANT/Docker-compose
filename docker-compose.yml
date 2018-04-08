@@ -121,6 +121,9 @@ services:
           # New threads are only spawned when concurrent requests are received
           # If all threads are busy, requests are queued      
           - APIANT_NATIVE_WORK_QUEUE_MAX_THREADS=10
+          
+          # The max number of failed transactions to be placed into the auto-retry work queue
+          - APIANT_NATIVE_WORK_QUEUE_MAX_QUEUED_RETRIES=250
       
           # An automation will be terminated if the Tomcat free memory is below this value, -1 for infinite
           - APIANT_MIN_FREE_MEMORY_MB=250
@@ -145,6 +148,10 @@ services:
           - APIANT_PROXY_USERNAME=
           - APIANT_PROXY_PASSWORD=
           
+          # If true, the browser will use Tomcat ports 8080 or 8443 for websocket connections
+          # If false, no Tomcat port number will be specified in the URL
+          - APIANT_DO_WEBSOCKETS_CONNECT_TO_TOMCAT=false
+          
           # True enables debug output into tomcat.log
           - APIANT_LOGGING_IS_DEBUG_OUTPUT_ENABLED=false
           
@@ -157,9 +164,6 @@ services:
           # S3 Region, e.g. us-west-2
           - APIANT_AMAZON_S3_REGION=
           - APIANT_AMAZON_S3_BUCKET=
-          
-          # If this is a Development Server, enter one or more production server URL's, e.g. https://mydomain.com
-          - APIANT_PRODUCTION_SERVER_URL=
           
           # The system has a Google Talk service that can be used to build interactive automations
           - APIANT_GOOGLE_TALK_USERNAME=
@@ -177,6 +181,10 @@ services:
           # The maximum amount of data in MB that can be loaded from HTTP responses, -1 for infinite
           - APIANT_MAX_HTTP_DATA_MB=100
           
+          # If this is a Development Server, enter one or more production server URL's, e.g. https://mydomain.com
+          # Separate multiple URLS with a pipe "|"
+          - APIANT_PRODUCTION_SERVER_URLS=
+          
           # The number of seconds to wait for a socket response before timing out, zero for infinite
           - APIANT_SOCKET_TIMEOUT_SECONDS=3600
           
@@ -187,10 +195,21 @@ services:
           - APIANT_MAX_SIMPLE_DB_RESULT_CHUNKS=100
           
           # If true, new accounts can be created
+          # Ignored if SSO (Single Sign-On) is enabled
           - APIANT_NEW_ACCOUNT_CREATION_IS_NEW_ACCOUNT_CREATION_ALLOWED=true
           
+          # Set this to false to not allow users to register new accounts using public
+          # e-mail addresses from public e-mail providers like Gmail, Hotmail, MSN, Yahoo, or AOL that
+          # don't authenticate user names
+          # Ignored if SSO (Single Sign-On) is enabled
+          - APIANT_NEW_ACCOUNT_CREATION_IS_PUBLIC_REGISTRATION_EMAIL_ADDRESS_ALLOWED=true
+          
           # If true, the system will generate the initial password for new accounts.  If false, end users can choose their own password
+          # Ignored if SSO (Single Sign-On) is enabled
           - APIANT_NEW_ACCOUNT_CREATION_IS_INITIAL_PASSWORD_SYSTEM_GENERATED=false
+          
+          # Set to -1 for no throttle
+          - APIANT_MAX_NEW_ACCOUNTS_PER_MINUTE=-1
           
           # The cron schedule to prune the database of data flagged for deletion
           - APIANT_CRON_PRUNE_DATABASE=0 3 * * *
@@ -299,6 +318,22 @@ services:
           # If true, the editor web pages won't display the .html extension in the browser URL
           - APIANT_IS_REMOVING_HTML_EXTENSION=false
           
+          # If the error message returned by an automation's action when processing a trigger data row contains the specified text, the
+          # trigger data row will be retried up to 3 times in 5, 10, and 15 minute intervals.
+          # If the automation error message contains the text (case insensitive), it is considered a match.
+          # Separate errors with a pipe "|"
+          # The baseline system's config file contains all the entries below by default
+          # To disable retries and remove the default values, you must enter a single value that is junk and won't match any error
+          - APIANT_RETRYABLE_AUTOMATION_ERRORS=Bad Gateway|Communications link failure|Connection has been closed|Connection is closed|Connection reset|Internal Server Error|Problems while creating connection to|Received error 5|Remote host closed connection during handshake|SSL peer shut down incorrectly|Timed out
+          
+          # By default if an automation receives a 401 unauthorized error the automation is turned off and alert emails are sent.
+          # Some API's return an 401 error code for errors other than the credentials being unauthorized.
+          # If the automation error message contains the text (case insensitive), it is considered a match and a 401 will not cause the automation to be turned off.
+          # Separate matches with a pipe "|"
+          # The baseline system's config file contains all the matches below by default
+          # To disable 401 processing and remove the default matches, you must enter a single value that is junk and won't match any API's domain
+          - APIANT_IGNORE_AUTOMATION_401=api.tumblr.com|pcrecruiter.net
+      
           # If true, the admin will receive an email whenever a user signs into the system
           - APIANT_ADMIN_IS_EMAILED_ON_ALL_LOGINS=false
       # ----------------------------------------------------------------------------------------------------------------------
