@@ -1,39 +1,29 @@
-1. The "Utility - Pause" module now has an entry field to specify milliseconds to pause.
+1. Fixed a null pointer exception introduced by the previous system release that prevented batch job assemblies from being executed on the server.
 
-2. The Simple DB SELECT, INSERT, and DELETE modules can now be configured with an optional automation scope UUID.
+2. Fixed an issue where an Iterator module having a nested subassembly would not update the *COUNTER* value with each iteration.
 
-3. Fixed the "Data Rows - Count Subnodes" module so the "Modify data stream(s)" option works correctly. 
+3. When a subassembly is nested inside a Loop or Conditional Iterator module and the magnifying glass icon is used to visually select data paths, the selected data path will now be preceeded by "xpath:" so it functions correctly as a data path instead of as a literal string.
 
-4. The "Write to log" module has been renamed to "Logging - Write to Log" and enhanced with functionality to write to a temporary log with a specified name.  Temporary logs are purged the next time the system is restarted.
+4. The Instagram integration has been deprecated b/c they have removed practically all of their API endpoints due to the Facebook scandal: https://www.instagram.com/developer/changelog/
 
-5. Added a "Logging - Erase Temporary Log" module that erases a temporary log created by the "Logging - Write to Log" module.
+5. Exceptions that occur when nested submodules are executed now get logged in automation and batch job logs, rather than causing assemblies to hang and not complete processing.
 
-6. The "Utility - Long Text" module has been renamed to "Text Value", so it is listed beside other text processing modules in the assembly editor catalog.
+6. If a Loop module's nested subassembly emitted more data streams than were input into the Loop and if the Loop was configured to emit new data streams with the results, that would lead to a null pointer exception due to not enough output data streams existing and needing to be created by the system's Module API logic.  This is now fixed.
 
-7. Added "Global Value - Set Value" and "Global Value - Get Value" modules that store and retrieve values globally in the scope of an executing assembly.  These are helpful for accessing data across multiple nested subassemblies as an assembly executes.
+7. The <purgeClosedAccountsAfterDays> config setting has been removed, due to the danger of automatically pruning assemblies owned by the account.  The corresponding APIANT_PURGE_CLOSED_ACCOUNTS_AFTER_DAYS docker_compose.yml environment variable is also no longer supported.
 
-8. Developer trace logs are now automatically purged if they grow larger than 250MB.
+8. Added a _dbCountKeyValues() method to the Module API that returns the count of matching keyvalues in the Simple DB.
 
-9. System.out.println() within inlined Java JSP code is now written to automation debug logs when the assembly runs within an automation.  System.out.println() continues to write to the developer's trace log when assemblies are run in the assembly editor or outside of automations.
+9. The <maxTriggerUniqueRows> system config setting has been removed.
 
-10. Accounts with the "Assembly Developer" or "Switch Account" permissions will see a new "View database dump" menu option from automation gear icons in the automation editor's dashboard.  The menu item opens a new browser window that dumps out Simple DB data stored by the automation, including trigger row identifiers for polling triggers and two-way sync data.
+10. The Trigger - Emit New Items module, Trigger - Emit New Items (Gated) module, and Emit New Items module no longer have a limit on the number of identifiers they store in the Simple DB.
 
-11. Automatic system retries of automation errors is now disabled when automations are run manually in the Export mode.
+11. The Trigger - Emit New Items module's implementation has been refactored and optimized such that it no longer fetches all identifiers from the database in order to determine which ones are new.  Instead, a database search is now performed of just the identifiers contained within the module's input data.
 
-12. Development servers can now be configured to publish content to multiple production servers.
+12. The remove() method on VTDElement has been made private and deleted from the VTD-XML JavaDoc.  This method was inavertently public.  The detach() method should be used to remove nodes when working with VTDDocuments in inlined Java code within assemblies.
 
-13. When content is published to production, a new dialog appears that lets multiple production servers be selected.  If a single production server is selected, one or more tenant accounts can be selected.
+13. When building a new two-way sync automation, the automation editor will no longer display a warning about flushing sync identifiers from the database when new triggers and actions are being configured and saved.
 
-14. The Goo.gl integration has been deprecated b/c Google is shutting down the service this year.
+14. The Trigger - Two-Way Sync module's implementation has been refactored and optimized such that it no longer fetches all sync identifiers from the database in order to determine the needed processing.  Instead, a database search is now performed of just the identifiers contained within the module's input data.
 
-15. The system has a new <maxQueuedRetries> config setting that controls the maximum size of the system's retry queue for failed transactions (transactions that report any error listed in the <retryableAutomationErrors> config setting).  A new docker-compose.yml environment variable named APIANT_NATIVE_WORK_QUEUE_MAX_QUEUED_RETRIES controls this setting.  The default is 250 if not specified.
-
-16. Fixed an issue with the "Text Default if Empty" module's server-side implementation where even though logs would indicate that new nodes with default values were added successfully, the output data stream would not contain the newly added nodes when another module received the data stream as seen when the subsequent module would log its input data stream(s).
-
-17. The "Subscription Plans" page in the Admin Console is now only visible for cloud-hosted systems.
-
-18. The "Subscription Plans" page in the Admin Console has been redesigned to make it easier to use, performant, and able to modify all available settings related to subscription plans for cloud-hosted systems.
-
-19. The "Settings" page in the Admin Console now supports many more additional system configuration settings.
-
-20. Added support for APIANT_PRODUCTION_SERVER_URLS, APIANT_RETRYABLE_AUTOMATION_ERRORS, and APIANT_IGNORE_AUTOMATION_401 environment variables in docker-compose.yml.
+15. The Transform Text's "lookup value in key-value table" action's "Value" input data field has been renamed to "Key".
