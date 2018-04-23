@@ -1,29 +1,15 @@
-1. Fixed a null pointer exception introduced by the previous system release that prevented batch job assemblies from being executed on the server.
+1. The OAuth refresh token logic now waits for up to 1 minute for a mutex lock to be cleared, rather than waiting indefinitely.
 
-2. Fixed an issue where an Iterator module having a nested subassembly would not update the *COUNTER* value with each iteration.
+2. Fixed an issue that was causing the Feed "create RSS feed" action to generate a malformed feed due to content always being appended to the feed file.
 
-3. When a subassembly is nested inside a Loop or Conditional Iterator module and the magnifying glass icon is used to visually select data paths, the selected data path will now be preceeded by "xpath:" so it functions correctly as a data path instead of as a literal string.
+3. Fixed an issue where automation logs contained an erroneous message "... is using connected account [Default]..." even if the action/trigger was configured to use a different account.
 
-4. The Instagram integration has been deprecated b/c they have removed practically all of their API endpoints due to the Facebook scandal: https://www.instagram.com/developer/changelog/
+4. Fixed a rare issue where sometimes when saving a module in the Module IDE the Java implementation code would become erased.
 
-5. Exceptions that occur when nested submodules are executed now get logged in automation and batch job logs, rather than causing assemblies to hang and not complete processing.
+5. Velocify LeadManager https://velocify.com/products has been integrated.
 
-6. If a Loop module's nested subassembly emitted more data streams than were input into the Loop and if the Loop was configured to emit new data streams with the results, that would lead to a null pointer exception due to not enough output data streams existing and needing to be created by the system's Module API logic.  This is now fixed.
+6. The system's implementation of automation worker servers has been refactored to make it more flexible and easier to configure.  Instead of assigning ranges of automation, batch job, and web service ids per worker server, now the system uses a consistent hash algorithm to determine which worker server will process which item.
 
-7. The <purgeClosedAccountsAfterDays> config setting has been removed, due to the danger of automatically pruning assemblies owned by the account.  The corresponding APIANT_PURGE_CLOSED_ACCOUNTS_AFTER_DAYS docker_compose.yml environment variable is also no longer supported.
+7. The opaque background view now fades in and out according to the theme's "transition_speed" setting.
 
-8. Added a _dbCountKeyValues() method to the Module API that returns the count of matching keyvalues in the Simple DB.
-
-9. The <maxTriggerUniqueRows> system config setting has been removed.
-
-10. The Trigger - Emit New Items module, Trigger - Emit New Items (Gated) module, and Emit New Items module no longer have a limit on the number of identifiers they store in the Simple DB.
-
-11. The Trigger - Emit New Items module's implementation has been refactored and optimized such that it no longer fetches all identifiers from the database in order to determine which ones are new.  Instead, a database search is now performed of just the identifiers contained within the module's input data.
-
-12. The remove() method on VTDElement has been made private and deleted from the VTD-XML JavaDoc.  This method was inavertently public.  The detach() method should be used to remove nodes when working with VTDDocuments in inlined Java code within assemblies.
-
-13. When building a new two-way sync automation, the automation editor will no longer display a warning about flushing sync identifiers from the database when new triggers and actions are being configured and saved.
-
-14. The Trigger - Two-Way Sync module's implementation has been refactored and optimized such that it no longer fetches all sync identifiers from the database in order to determine the needed processing.  Instead, a database search is now performed of just the identifiers contained within the module's input data.
-
-15. The Transform Text's "lookup value in key-value table" action's "Value" input data field has been renamed to "Key".
+8. If the license validation fails when the system boots, a clearer message is logged about the problem.
