@@ -1,15 +1,17 @@
-1. The OAuth refresh token logic now waits for up to 1 minute for a mutex lock to be cleared, rather than waiting indefinitely.
+1. OAuth token refresh serialization now uses a MySQL lock rather than a file lock, in order to support worker server farms with multiple servers processing automations.
 
-2. Fixed an issue that was causing the Feed "create RSS feed" action to generate a malformed feed due to content always being appended to the feed file.
+2. OAuth tokens that have an associated refresh URL are now only refreshed once an hour, rather than being refreshed every time an API call is made.
 
-3. Fixed an issue where automation logs contained an erroneous message "... is using connected account [Default]..." even if the action/trigger was configured to use a different account.
+3. Automations are now versioned.  When saving edits to an automation, the system now prompts for a version description.  A new "Versions" menu option appears in the automation gear icons in the dashboard.  Clicking it opens a list of saved versions for the automation.  Clicking on a saved version in the list opens it in the editor.
 
-4. Fixed a rare issue where sometimes when saving a module in the Module IDE the Java implementation code would become erased.
+4. Subscription plans can now limit the number of connected apps.
 
-5. Velocify LeadManager https://velocify.com/products has been integrated.
+5. Subscription plans can now disallow usage of two-way sync functionality.
 
-6. The system's implementation of automation worker servers has been refactored to make it more flexible and easier to configure.  Instead of assigning ranges of automation, batch job, and web service ids per worker server, now the system uses a consistent hash algorithm to determine which worker server will process which item.
+6. Added an "emit Nth array element" action for the Data Transform app.
 
-7. The opaque background view now fades in and out according to the theme's "transition_speed" setting.
+7. When the system administrator locks the system via the Admin Console, automations that are executing will now halt their processing when a trigger data row completes its last action, rather than continuing to process all trigger data rows.
 
-8. If the license validation fails when the system boots, a clearer message is logged about the problem.
+8. When an automation exceeds its timeout limit, the system now waits up to an additional 5 minutes for the trigger data row to finish processing its last action before the automation is halted, rather than immediately halting the automation.
+
+9. Netex LearningCloud https://www.netexlearning.com/learningcloud has been integrated.
