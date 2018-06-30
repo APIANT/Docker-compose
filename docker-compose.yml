@@ -37,10 +37,13 @@ services:
       # This section of environment variables define Tomcat settings
       # ----------------------------------------------------------------------------------------------------------------------
           # The minimum amount of Tomcat heap space
-          - TOMCAT_HEAP_MIN=2048m
+          # Recommend setting this to half of the TOMCAT_HEAP_MAX
+          - TOMCAT_HEAP_MIN=2G
 
           # The maximum amount of Tomcat heap space
-          - TOMCAT_HEAP_MAX=4096m
+          # 4G is a bare minimum just suitable for demo systems
+          # Production systems typically need 16G or more, depending on automation processing
+          - TOMCAT_HEAP_MAX=4G
     
       # ----------------------------------------------------------------------------------------------------------------------
       # This section of environment variables define the database connection, typically to the database instance defined above
@@ -77,7 +80,9 @@ services:
           - APIANT_IP_ADDRESS=
           
           # The domain and optional port to reach the server.  Must include http:// or https:// e.g. https://mydomain.com
-          - APIANT_DOMAIN=http://localhost:8080
+          - APIANT_DOMAIN=https://localhost
+          # If not using the included HAProxy w/ SSL, comment out the above line and uncomment the following line
+          #- APIANT_DOMAIN=http://localhost:8080
       # ----------------------------------------------------------------------------------------------------------------------
 
       # ----------------------------------------------------------------------------------------------------------------------
@@ -134,11 +139,12 @@ services:
           # The max number of failed transactions to be placed into the auto-retry work queue
           - APIANT_NATIVE_WORK_QUEUE_MAX_QUEUED_RETRIES=250
       
-          # An automation will be terminated if the Tomcat free memory is below this value, -1 for infinite
+          # The minimum amount of free memory needed before an automation will be executed, -1 for infinite
           - APIANT_MIN_FREE_MEMORY_MB=250
           
           # The system admin will receive an email alert if the free Tomcat memory dips below this threshold
           # Only a single alert email is sent, until the system is rebooted
+          # Use TOMCAT_HEAP_MAX above to allocate more memory to Tomcat
           # Enter zero to disable
           - APIANT_MIN_FREE_MEMORY_ALERT_MB=250
       # ----------------------------------------------------------------------------------------------------------------------
@@ -360,6 +366,8 @@ services:
       
     links:
       - db
+     # If not using HAProxy, APIANT_DOMAIN above must match the port exposed for Tomcat.
+     # If port 80 is exposed for Tomcat, APIANT_DOMAIN should not contain the port number.
      # Uncomment the next 2 lines if not using the included HAProxy    
 #    ports:
 #      - "8080:8080"
@@ -377,6 +385,8 @@ services:
       webapp:
         condition: service_healthy
     ports:
+     # APIANT_DOMAIN above must match the port exposed for HAProxy.
+     # If port 80 and 443 are exposed for HAProxy, APIANT_DOMAIN should not contain the port number.
       - "80:80"
       - "443:443"
     volumes:

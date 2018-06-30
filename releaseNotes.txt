@@ -1,27 +1,19 @@
-1. Added "New Subscription (instant)" and "Updated Subscription (instant)" triggers for Recurly.
+1. All automation alert emails scheduled for immediate delivery are now queued and sent out no faster than once a minute, with multiple copies of the same alert now batched into a single digest summary email, to avoid the possibility of a high-volume webhook automation resulting in lots of spam emails should it experience an error while under heavy load.
 
-2. TeamWave.com has been integrated.
+2. Fixed an issue with the Trigger Two-Way Sync module where new items were not being processed.
 
-3. BigML.com has been integrated.
+3. Fetched API data is now made available for garbage collection after it has been parsed into XML, which helps to reduce the system's peak memory usage.
 
-4. Aimtell.com has been integrated.
+4. The MailChimp integration now uses HTTPS, which they will require starting 7-30-18.
 
-5. Fixed an issue with the Trigger - Two-way Sync module where the trigger type dropdown has a value of "Delete" but the implementation code was expecting "Deleted".
+5. An internal change to wrapper classes around the system's XML parser has resulted in a reduction of parsed XML memory consumption by 50%.  Since all automations use this XML parser, peak memory usage of the entire system as it processes automations is also reduced by about 50%.
 
-6. UserEngage.com has been integrated.
+6. The "Purge Server Cache" button on the Admin Console's Settings screen has been replaced with a "Reload License Key(s)" button that will refresh all license keys with any modified limits without having to reboot the system.
 
-7. Cayzu.com has been integrated.
+7. 123ContactForm has been rebranded to 123FormBuilder and its integration has been updated.
 
-8. Mautic.org has been integrated.
+8. The Tomcat Docker container is now configured with Java flags to optimize garbage collection.
 
-9. Webflow.com has been integrated.
+9. If an account has exceeded its allowance of monthly webhook invocations, when webhooks are received for the account's automations they are no longer discarded but are now stored in the database.  At the first of the month, the stored webhooks will automatically be processed.
 
-10. Fixed an issue with the Action Two-Way Sync module that caused Delete actions to not pass the <mapped_item_id> field in the Action XML to the subassembly.
-
-11. Fixed an issue with the automation execution engine where the Action - Skip Data Row module would not result in subsequent actions being executed.
-
-12. The Quickbooks "lookup bill" action can now optionally look up a bill that matches a payee name.
-
-13. Improved the logic for parsing query parameters off of web service URL's.
-
-14. Fixed an issue with the Action Two-Way Sync module that caused deleted items to be processed multiple times.
+10. If the system crashes or is rebooted when it has received webhooks but hasn't processed them yet, the system will now automatically process them upon bootup. 
