@@ -1,19 +1,51 @@
-1. All automation alert emails scheduled for immediate delivery are now queued and sent out no faster than once a minute, with multiple copies of the same alert now batched into a single digest summary email, to avoid the possibility of a high-volume webhook automation resulting in lots of spam emails should it experience an error while under heavy load.
+1. "Get service by id" and "Get contract by id" actions have been added for Mindbody.
 
-2. Fixed an issue with the Trigger Two-Way Sync module where new items were not being processed.
+2. Fixed the Extension - Server-Side Script module so that XML datastreams inserted into the PHP code now have dollar signs escaped, so PHP doesn't interpret them as variable declarations.
 
-3. Fetched API data is now made available for garbage collection after it has been parsed into XML, which helps to reduce the system's peak memory usage.
+3. The Action module has a new checkbox setting that lets the automation engine iterate the action if the mapped input data contains array values.  The iteration only occurs if all arrays have the same size.  If the action assembly contains an Action Output module, it will emit arrays of output values containing the output for all iterations of the action.
 
-4. The MailChimp integration now uses HTTPS, which they will require starting 7-30-18.
+4. Fixed the OAuth v2.0 Workflow module so that unchecking the "append state parameter" option functions correctly.
 
-5. An internal change to wrapper classes around the system's XML parser has resulted in a reduction of parsed XML memory consumption by 50%.  Since all automations use this XML parser, peak memory usage of the entire system as it processes automations is also reduced by about 50%.
+5. The 500px integration has been deprecated b/c their API is no longer public.
 
-6. The "Purge Server Cache" button on the Admin Console's Settings screen has been replaced with a "Reload License Key(s)" button that will refresh all license keys with any modified limits without having to reboot the system.
+6. The Google Talk integration has been deprecated b/c they have a different API for Hangouts.
 
-7. 123ContactForm has been rebranded to 123FormBuilder and its integration has been updated.
+7. The baseline docker-compose.yml now includes a Tomcat volume /home/data/apiant/appResources:/usr/local/tomcat/webapps/apiant/appResources so that image resources are persisted.
 
-8. The Tomcat Docker container is now configured with Java flags to optimize garbage collection.
+8. Fixed the parsing of the query string sent by the Execute Automation action such that the receiving automation can access the first parameter's value in the query string.
 
-9. If an account has exceeded its allowance of monthly webhook invocations, when webhooks are received for the account's automations they are no longer discarded but are now stored in the database.  At the first of the month, the stored webhooks will automatically be processed.
+9. The Trigger - Emit New Items, Trigger - Emit New Items (Gated), and Emit New Items modules now all perform case-insensitive comparisons of item identifiers.  The primary reason is that is it common to use email addresses as unique identifiers, for which case should be ignored.
 
-10. If the system crashes or is rebooted when it has received webhooks but hasn't processed them yet, the system will now automatically process them upon bootup. 
+10. The Admin Console's "Automations" page now correctly reports the "total tasks this month" for all tenants when the "view all" checkbox is checked, rather than reporting just the total tasks for the master system and not the tenants.
+
+11. Added "Unary Protocol Thread", "Get Unary Protocol Thread Settings", "Send Unary Protocol Thread Payload", and "Receive Unary Protocol Thread Payload" modules to support integrating protocols that always need to be connected, like XMPP for Jabber.
+
+12. The Admin Console has a new "Protocol Threads" screen to turn protocol threads on and off.  Once activated, a protocol thread will be restarted whenever the system is booted.
+
+12. The Jabber integration, which was previously hardcoded into the server's code, has been refactored so it is now entirely done in the assembly editor via a Unary Protocol Thread.
+
+13. Config settings related to Jabber and Google Talk have been removed from the system's config and from docker-compose.
+
+14. The Instant Message and Get Inbound Instant Messages modules have been removed.
+
+15. The confirmation message that appears at the top center after performing UI interactions is now wider, uses a much larger font, stays onscreen much longer, and is colored green for successful actions.
+
+16. The XML Builder and XML Row Builder modules now have a checkbox setting to control if substituted VALs in node text, e.g. <node>VAL1</node>, will be wrapped with CDATA or not.  The default is to wrap with CDATA, per the current behavior.  If unchecked, any XML special characters within substituted values are escaped, e.g. "<" is replaced with "&lt;".
+
+17. The Admin Console now checks its software version and compares it to the system's database.  If it doesn't match (usually only immediately after installing a system upgrade) a message dialog appears that reloads the Admin Console.  If reloaded via the dialog's button, the URL has a cache-busting parameter added as a way to help ensure the latest version is loaded from the server.
+
+18. Added a "Trigger - Protocol Thread" module that allows an always-connected protocol to be used to listen for data, such as for a socket connection to a message queue.  Each trigger in each active running automation has a background thread that runs for as long as the automation is active.
+
+19. When a script code module is in readonly mode due to the user's account not having Script Developer permission, "READONLY" now appears in red within the module with a help button explaining why.  [READONLY] is no longer appended to the module's name in its title bar.
+
+20. Assemblies in the Assembly Editor that have been shared with write access can now be saved by the recipient account, rather than only copied.
+
+21. Added a "new opportunity" trigger for vTiger CRM and also refactored all existing vTiger CRM trigger to use their API query endpoint instead of the sync endpoint, so that API results are sorted by newest added first which makes the new item triggers function as intended.
+
+22. A database column has been removed, which can result in some systems storing up to 50% less data in the database.
+
+23. When an account is closed, either from the Automation Editor or the Admin Console, an option is now presented to have all of the account's data wiped from the system.  If selected, all of the account's automations, data, and account information will be purged from the database according to the system's schedule for purging data (the default schedule is once a day in off-hours).
+
+24. The Admin Console now shows system free memory information at the top of the Memory Usage screen instead of on the Native Work Queue screen.
+
+25. Automations have a new "Data Storage" menu option in their gear menus in the Automation Editor's dashboard.  When data storage is disabled, the automation generates no logs and transaction information is not stored in the database.  This results in no transaction information being accessible or searchable from the automation's history screen.  Any failed transactions will not have a "Retry" button, since the data needed to retry failed transactions won't be stored in the database.  The purpose of this functionality is primarily for accounts that need to adhere to GDPR.

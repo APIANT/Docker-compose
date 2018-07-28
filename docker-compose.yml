@@ -180,16 +180,6 @@ services:
           - APIANT_AMAZON_S3_REGION=
           - APIANT_AMAZON_S3_BUCKET=
           
-          # The system has a Google Talk service that can be used to build interactive automations
-          - APIANT_GOOGLE_TALK_USERNAME=
-          - APIANT_GOOGLE_TALK_PASSWORD=
-          
-          # The system has a Jabber service that can be used to build interactive automations
-          # The Jabber server to use, e.g. jabber.at
-          - APIANT_JABBER_SERVER=
-          - APIANT_JABBER_USERNAME=
-          - APIANT_JABBER_PASSWORD=
-          
           # The maximum number of concurrent HTTP connections
           - APIANT_MAX_HTTP_CONNECTIONS=500
           
@@ -376,6 +366,7 @@ services:
     volumes:
       - /home/data/apiant/appLogs:/usr/local/tomcat/webapps/apiant/appLogs
       - /home/data/apiant/appModules:/usr/local/tomcat/webapps/apiant/appModules
+      - /home/data/apiant/appResources:/usr/local/tomcat/webapps/apiant/appResources
       - /home/data/apiant/build:/usr/local/tomcat/webapps/apiant/build
       - /home/data/apiant/WEB-INF/classes/appModules:/usr/local/tomcat/webapps/apiant/WEB-INF/classes/appModules
   # HAProxy is optional.  It is included in order to support SSL.  Comment out or remove the next section if desired.   
