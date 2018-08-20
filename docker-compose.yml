@@ -228,6 +228,9 @@ services:
           # The system is continously generating tomcat temp files when JSP's are compiled that need to be pruned
           - APIANT_CRON_PURGE_TEMP_JSP_FILES=1 5 * * *
           
+          # The cron schedule to retry unprocessed webhooks
+          - APIANT_CRON_RETRY_UNPROCESSED_WEBHOOKS=0 12 * * *
+          
           # The cron schedule to delete unused webhooks (due to abandoning automation creation, or when automations are deleted) from remote API's
           - APIANT_CRON_PURGE_DANGLING_WEBHOOKS=30 * * * *
           

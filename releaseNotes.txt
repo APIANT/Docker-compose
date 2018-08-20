@@ -1,17 +1,61 @@
-1. Fixed Infusionsoft, Slack, and Todoist so accounts can now be connected again, by enabling their "state" parameter in the OAuth v2.0 Workflow module.
+1. Fixed an issue that prevented tenant databases from being created by altering the format of the baseline database SQL dump.
 
-2. The Jabber protocol thread assembly has been modified to use Utility - Keyvault Value modules instead of Text Entry Parameter modules.  All protocol threads must use the Utility - Keyvault Value module to store credentials so that these assemblies can be modified and updated without erasing credentials.
+2. After signing in to the Automation Editor, the dashboard is now refreshed so that automations will appear.
 
-3. The Utility - Keyvault Value module's "Share" setting checkbox has been removed.  Instead, new and much simpler scope rules are now used.  When the assembly is executed in the Assembly Editor, the signed-in account's keyvault is accessed.  When the assembly is executed outside of the Assembly Editor, the keyvault for the account that owns the assembly is accessed.
+3. Added an "add new activity" action to Pipedrive.
 
-4. Fixed signin via OAuth so that a second popup window isn't opened.
+4. Added an "add contact to list" action to CallFire.
 
-5. Added additional error checking to the Google Calendar app assembly.
+5. The Save and Cancel hyperlinks at the top of the automation builder screen are now buttons.
 
-6. The existing Pipedrive "add new deal" and "add organization" actions have been deprecated and replaced with new versions that support all data fields.
+6. The EventBrite "new attendee at event" trigger now filters out duplicate attendees caused by multiple attendee ids that have hyphens in them, that all represent the same attendee.
 
-7. The Typeform integration has been deprecated b/c they turned off the API endpoints being used. 
+7. 3PL has been integrated with a "new order shipped" trigger and a "create order" action.
 
-8. The Infusionsoft "fetch recently updated contact" subassembly now fetches 50 contacts instead of 100 and its script timeout has been removed.
+8. Fixed the Admin Console's App Catalog screen so that when apps are selected in the list the Edit App and Remove App buttons are now enabled.
 
-9. All GMail triggers now emit "From name" as a data field, which is the sender's name.
+9. Fixed an issue when opening triggers and actions for editing in the automation editor where the screen would not be rendered correctly while drilldown dropdown controls (e.g. dropdowns that navigate filesystems like FTP/SFTP folders) were being loaded with data.
+
+10. The Fetch Paginated modules no longer require data paths to be entered in order that the nested item can be invoked once to determine them, per the modules' help instructions.
+
+11. Native Safari on iOS devices is now supported, including inertial scrolling and touch gestures for drag-drop.
+
+12. Large quantities of action field mappings can now be rendered immediately in the automation editor.  Almost 500 fields can now be rendered in under a second, where before they could take up to a minute.  As a performance tradeoff, currently all action field mapping edit boxes are the same height rather than adjusting their height to their contents.
+
+13. Fixed an issue where mouseover tooltips could appear for views that are not visible onscreen due to clipping. 
+
+14. Added a "new deal" trigger for Pipedrive.
+
+15. When on the User Accounts screen in the Admin Console, choosing a different tenant now results in the screen being reloaded with the selected tenant's accounts.
+
+16. The Trigger module now more intelligently parses out dynamic data fields, especially those returned by JSON API responses.  This can result in additional data fields being emitted for mapping, where previously they would not be emitted.
+
+17. Fixed the AWeber "add subscriber to list" action so it doesn't report an error when the subscriber is already subscribed.
+
+18. Eclypses https://www.eclypses.com has been integrated.
+
+19. Mouseover tooltips are now positioned so they don't overlay controls, especially when typing in text.
+
+20. Added a "get stage id by stage name" action for Pipedrive.
+
+21. Fixed an issue with module processing for cases where data row paths were configured with a "*" to match any node, such that the modules now process data in the Java runtime on the server the same as in the browser.
+
+22. The Mindbody app connection assembly has been fixed so invalid credentials return an error rather than a successful connection.
+
+23. The Fatal Error modules and the Text Value module have new sample assemblies.
+
+24. The help text for the HTTP Transaction module and all of its variants has been updated with information on error handling.
+
+25. The Utility - Keyvault Value module now has a dropdown setting to control the account whose keyvault will be used when the assembly is executed outside of the assembly editor.
+
+26. The Utility - Keyvault Value module now has a checkbox setting to control if an error should be emitted if no value is in the keyvault.
+
+27. After adding a module having a control with numbered lines (e.g. the args to a script module) to an assembly, dragging and dropping the lines into a new order now results in the line numbering being updated.
+
+28. Deprecated modules are now highlighted yellow in the assembly editor.
+
+29. When assemblies are saved, if any deprecated modules are in the assembly a warning message now appears.
+
+30. Fixed a system issue where webhooks received for tenant systems were not being removed from the database after they had been processed, b/c the code was trying to delete from the master database instead of the tenant database.
+
+31. The system now has a new setting accessible in the Admin Console's settings screen that defines a cron schedule to retry unprocessed webhooks, rather than retrying them when the system boots.  This setting is named "APIANT_CRON_RETRY_UNPROCESSED_WEBHOOKS" in docker-compose.yml.
