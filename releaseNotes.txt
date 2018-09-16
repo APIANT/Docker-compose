@@ -1,61 +1,63 @@
-1. Fixed an issue that prevented tenant databases from being created by altering the format of the baseline database SQL dump.
+1. Fixed an issue in the Admin Console's System Settings screen where the lists of production servers, worker servers, retryable errors, and 401 error codes to ignore would duplicate all their content each time the System Settings screen was opened.
 
-2. After signing in to the Automation Editor, the dashboard is now refreshed so that automations will appear.
+2. The "connect an app" hyperlink at the top of the automation editor's Connections screen is now a button.
 
-3. Added an "add new activity" action to Pipedrive.
+3. The Asana API is added to the list of API's for which to ignore 401 errors, so that automations using Asana won't be turned off.  Asana has been seen returning a 401 even though the credentials remained valid.
 
-4. Added an "add contact to list" action to CallFire.
+4. When Java implementations for modules are being compiled either from the admin console or when the system boots after being upgraded, only automations, batch jobs, and web services for the tenants pending compilation are now blocked from being executed until the tenant's Java module implementations have finished compilation, rather than all of the system's automations, batch jobs, and web services being blocked.
 
-5. The Save and Cancel hyperlinks at the top of the automation builder screen are now buttons.
+5. Added a "remove contact from list" action and "get contact by property" action for CallFire.
 
-6. The EventBrite "new attendee at event" trigger now filters out duplicate attendees caused by multiple attendee ids that have hyphens in them, that all represent the same attendee.
+6. Added a "remove subscriber from list" action for MailChimp.
 
-7. 3PL has been integrated with a "new order shipped" trigger and a "create order" action.
+7. The Mailchimp "updated subscriber in group", "updated subscriber", "new cleaned subscriber", and "new unsubscriber" triggers have been fixed so they function as expected.
 
-8. Fixed the Admin Console's App Catalog screen so that when apps are selected in the list the Edit App and Remove App buttons are now enabled.
+8. The Pipedrive app connection assembly has been fixed so that invalid API Tokens are no longer accepted.
 
-9. Fixed an issue when opening triggers and actions for editing in the automation editor where the screen would not be rendered correctly while drilldown dropdown controls (e.g. dropdowns that navigate filesystems like FTP/SFTP folders) were being loaded with data.
+9. The Pipedrive "add new deal", "add or update a deal", "add or update a person", and "add organization" actions can now save custom field values.
 
-10. The Fetch Paginated modules no longer require data paths to be entered in order that the nested item can be invoked once to determine them, per the modules' help instructions.
+10. The Geckoboard app connection assembly has been enhanced so that an invalid API Key is no longer accepted.
 
-11. Native Safari on iOS devices is now supported, including inertial scrolling and touch gestures for drag-drop.
+11. The Admin Console's "Automations", "Batch Jobs", "Web Services", "Tenants", and "User Accounts" screens now show usage information in relation to the system's licensed limits, if any limits are defined.  Usage information can be applicable for the system as a whole or per-tenant, depending on the license configuration.
 
-12. Large quantities of action field mappings can now be rendered immediately in the automation editor.  Almost 500 fields can now be rendered in under a second, where before they could take up to a minute.  As a performance tradeoff, currently all action field mapping edit boxes are the same height rather than adjusting their height to their contents.
+12. Fixed the automation execution engine so that actions nested within other actions (e.g. actions dragged from the catalog and placed into another action like a subassembly) will now work as expected such that input data is correctly processed.
 
-13. Fixed an issue where mouseover tooltips could appear for views that are not visible onscreen due to clipping. 
+13. Fixed an issue with server-side assembly execution where sometimes a nested subassembly within a module like a Conditional would receive the literal "xpath: XPATH" value instead of the data value referenced by the xpath.
 
-14. Added a "new deal" trigger for Pipedrive.
+14. Fixed an issue with the Trigger module that could cause the automation editor to hang when dynamic fields were being parsed if any field name was empty.
 
-15. When on the User Accounts screen in the Admin Console, choosing a different tenant now results in the screen being reloaded with the selected tenant's accounts.
+15. Added an "evaluate javascript expression" action for the Transform Data system app.
 
-16. The Trigger module now more intelligently parses out dynamic data fields, especially those returned by JSON API responses.  This can result in additional data fields being emitted for mapping, where previously they would not be emitted.
+16. The server no longer chunks data sent/received to/from the browser into 64KB chunks, which was previously being done due to a Java limitation on the server.
 
-17. Fixed the AWeber "add subscriber to list" action so it doesn't report an error when the subscriber is already subscribed.
+17. The "max simple db result chunks" setting has been removed from the admin console's settings screen.
 
-18. Eclypses https://www.eclypses.com has been integrated.
+18. The APIANT_MAX_SIMPLE_DB_RESULT_CHUNKS environment variable has been removed the from the baseline docker-compose.yml file.
 
-19. Mouseover tooltips are now positioned so they don't overlay controls, especially when typing in text.
+19. The Wufoo "new form entry (instant)" trigger has been deprecated.  A new version of the trigger is now available that uniquely names subfields.
 
-20. Added a "get stage id by stage name" action for Pipedrive.
+20. All Recurly instant triggers have been fixed so that they can now be configured in the automation editor.
 
-21. Fixed an issue with module processing for cases where data row paths were configured with a "*" to match any node, such that the modules now process data in the Java runtime on the server the same as in the browser.
+21. The MINDBODY integration has been updated so accounts can be connected to a sandbox.
 
-22. The Mindbody app connection assembly has been fixed so invalid credentials return an error rather than a successful connection.
+22. Zoom.us has been integrated with a "create meeting" action.
 
-23. The Fatal Error modules and the Text Value module have new sample assemblies.
+23. The Alert (via Email) module has been deprecated.  Instead, use a Conditional module with a nested Email module.
 
-24. The help text for the HTTP Transaction module and all of its variants has been updated with information on error handling.
+24. Warning messages related to "flushing two-way sync identifiers" have been removed when disconnecting accounts and saving changes to triggers/actions in the automation editor.  The only action that will flush two-way sync identifiers from the system is when the "reset" option is used from an automation's gear icon in the dashboard.
 
-25. The Utility - Keyvault Value module now has a dropdown setting to control the account whose keyvault will be used when the assembly is executed outside of the assembly editor.
+25. When the automation "reset" option is used from the dashboard, entries are now added to the automation's history informing that a reset has been performed.
 
-26. The Utility - Keyvault Value module now has a checkbox setting to control if an error should be emitted if no value is in the keyvault.
+26. The internal API mechanism that some modules use to communicate with the server has been revised.
 
-27. After adding a module having a control with numbered lines (e.g. the args to a script module) to an assembly, dragging and dropping the lines into a new order now results in the line numbering being updated.
+27. Fixed an issue with the Admin Console's "System Keyvault" where if someone was signed in with a tenant account they could not add or update keyvault values.
 
-28. Deprecated modules are now highlighted yellow in the assembly editor.
+28. The Jotform "new form submission" trigger has been deprecated and replaced with a new version that parses out all available form fields and subfields.
 
-29. When assemblies are saved, if any deprecated modules are in the assembly a warning message now appears.
+29. The automation execution engine now sends email alerts when triggers report errors.
 
-30. Fixed a system issue where webhooks received for tenant systems were not being removed from the database after they had been processed, b/c the code was trying to delete from the master database instead of the tenant database.
+30. If a webhook automation experiences an error with its trigger, the failed transaction is now retryable from the automation history screen.  Previously no "retry" button would appear.
 
-31. The system now has a new setting accessible in the Admin Console's settings screen that defines a cron schedule to retry unprocessed webhooks, rather than retrying them when the system boots.  This setting is named "APIANT_CRON_RETRY_UNPROCESSED_WEBHOOKS" in docker-compose.yml.
+31. When a failed webhook transaction is retried from the automation history screen, all data rows are no longer flagged with the "Success" checkmark if the transaction retry succeeds, instead just the retried action(s) are flagged with the "Success" checkmark.
+
+32. The MINDBODY "add or update client" action has been deprecated and replaced with a new version that offers selectable matching logic for matching existing clients for updates.

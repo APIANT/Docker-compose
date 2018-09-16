@@ -196,9 +196,6 @@ services:
           # The amount of time in seconds to wait before logging a long transaction to {TOMCAT_HOME}/logs/LongTransactions.log
           - APIANT_LOG_LONG_TRANSACTION_TIME_SECONDS=30
           
-          # Limits how much data is returned to the browser for queries against the system's Simple DB data storage
-          - APIANT_MAX_SIMPLE_DB_RESULT_CHUNKS=100
-          
           # If true, new accounts can be created
           # Ignored if SSO (Single Sign-On) is enabled
           - APIANT_NEW_ACCOUNT_CREATION_IS_NEW_ACCOUNT_CREATION_ALLOWED=true
