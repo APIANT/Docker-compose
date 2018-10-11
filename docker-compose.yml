@@ -83,6 +83,7 @@ services:
           # The default of http://localhost is only suitable when running the system on the same machine as the browser, e.g. your laptop
           - APIANT_DOMAIN=http://localhost
           # If not using the included HAProxy w/ SSL, comment out the above line and uncomment the following line
+          # Port 8080 is the Tomcat port exposed towards the bottom of this file
           #- APIANT_DOMAIN=http://localhost:8080
       # ----------------------------------------------------------------------------------------------------------------------
 
