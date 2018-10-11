@@ -80,7 +80,8 @@ services:
           - APIANT_IP_ADDRESS=
           
           # The domain and optional port to reach the server.  Must include http:// or https:// e.g. https://mydomain.com
-          - APIANT_DOMAIN=https://localhost
+          # The default of http://localhost is only suitable when running the system on the same machine as the browser, e.g. your laptop
+          - APIANT_DOMAIN=http://localhost
           # If not using the included HAProxy w/ SSL, comment out the above line and uncomment the following line
           #- APIANT_DOMAIN=http://localhost:8080
       # ----------------------------------------------------------------------------------------------------------------------
