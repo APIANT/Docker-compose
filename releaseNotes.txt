@@ -1,25 +1,37 @@
-1. In the automation editor's action field mappings, field help text height is now limited to a maximum height so that fields don't overrun their allowed height.
+1. Generated URL's to automation history detail entries obtained via the link icon now contain just a minimum of information needed to fetch the history item, resulting in much shorter URL's.
 
-2. Fixed the saving of assemblies so that unary protocol thread assemblies can now be saved to apps that already have other existing assemblies.
+2. Help information has been added to the Trigger Two-Way Sync module to describe the functionality of the radio buttons used to select the method by which items are considered to be new.
 
-3. The Utility - Keyvault Value module now uses the selected account in the assembly editor if the user's account either has the "Assembly Administrator" permission or if the user switched accounts.  This was done so that users with a high level of permission can troubleshoot assemblies easier.
+3. Programmatically created webhooks are no longer duplicated when configuring a trigger and different app accounts are selected.
 
-4. The PipelineDeals "add or update person" action has been fixed to avoid a malformed URL error.
+4. Programmatically created webhooks are now deleted when associated app accounts are disconnected.
 
-5. The MINDBODY "new or updated customer" trigger has been improved to reliably emit all available mappable output fields and to emit all available mappable custom output fields.
+5. Mouseover tooltips in the assembly editor catalog's search results no longer show erroneous tags.
 
-6. When an automation has it data storage option disabled, the automation's history screen now shows a tooltip above history entries indicating that the transactions cannot be inspected.
+6. The automation editor's Connections screen now has "eye" icons next to each connected account that show connection credentials.  Non-admin accounts must enter the account's password in order to view credentials.
 
-7. Added "new staff member", "new sale", "new service", "new product", "new package", "new upcoming class", "new upcoming appointment" triggers for MINDBODY.
+7. The MINDBODY "new or updated customer" trigger has been modified to use a MD5 hash of the customer record, b/c the API is returning records with updated last modified timestamps even though no direct changes are being made to customer info.
 
-8. Added an "add or update staff member" action for MINDBODY.
+8. The "Compute MD5 hash from child node text" subassembly has been deprecated b/c it was computing the hash only using top-level child node text instead of using all nested child nodes.  A new "Compute MD5 hash for nodes" subassembly has been created that computes the MD5 by serializing the node to XML, which includes all nested child nodes as expected.
 
-9. A database index has been altered to address a slow SQL query that affected automation execution performance.  The query was previously taking seconds to complete in a large database, now it takes less than a millisecond.
+9. Added a "get owner details" action for Sugar CRM.
 
-10. Fixed an issue with saving new keyvault values in the assembly editor that resulted in an "Invalid person UUID" error message.
+10. Google+ has been deprecated b/c Google is shutting down the service.
 
-11. The Admin Console's "Native Work Queue" screen now lists all transactions in the retry queue, showing the automations and data row uuids that are queued to be retried.
+11. Added a "Format JavaScript text" action for the Transform Text system app that escapes text values so they can supplied as string inputs to the Transform Data system app's "Evaluate JavaScript expression" action.
 
-12. In the automation's History screen, searches can now be performed using the data row uuid.
+12. Entries in the automation history for actions that were previously formatted as "Action #x [Action #x NAME]" are now formatted as "Action #x NAME".
 
-13. Lists in the Admin Console are now scrollable with the Safari iOS browser.
+13. After clicking on action entries in an automation's history, the "Action" tab's content now includes the output from the action.
+
+14. When the HTTP Transaction module's "Return response as URL to file" setting is enabled, the resulting URL no longer has a trailing character set at the end.
+
+15. New versions of the HTTP Transaction and OAuth Transaction modules now include PATCH verb support and emit a consistent output schema to facilitate reliable error handling logic.  Under the hood, a newer version of the HTTPClient Java library is used vs. the previous module which used a version about a decade old.  The previous modules are now deprecated, but currently remain in the catalog so they can still be used in case of issues with the new modules.  The previous modules will be made private and hidden in the catalog in a future release after the new modules are confirmed to be fully functional.
+
+16. New versions of the HTTP Multipart POST, OAuth Multipart POST, and SOAP modules now emit a consistent output schema to facilitate reliable error handling logic.  Under the hood, a newer version of the HTTPClient Java library is used vs. the previous module which used a version about a decade old.  The previous modules are now deprecated, but currently remain in the catalog so they can still be used in case of issues with the new modules.  The previous modules will be made private and hidden in the catalog in a future release after the new modules are confirmed to be fully functional.
+
+17. The BambooHR "new employee" and "updated employee" triggers have been fixed so that fields returned by the API having empty ID values are now ignored instead of causing an error.
+
+18. The Quickbooks Online "create new invoice" action has been fixed so that the fetching of custom fields is done via the QBO REST API rather than their SDK, due to a JAR conflict in the system causing their Java SDK to have an error.
+
+19. The Fetch Paginated Results modules no longer return the following error when a nested subassembly is used instead of a nested module: java.lang.ClassCastException: appModules.J_document cannot be cast to appModules.J_datapointer
