@@ -1,1 +1,19 @@
-1. 
+1. The Quickbooks Online "create bill" action has been enhanced so that amounts having a preceding currency symbol and commas can now be processed.
+
+2. Fixed an issue that would cause retried transactions to not be removed from the list in the Admin Console's Native Work Queue screen.
+
+3. The Constant Contact "new active contact in list" trigger has been deprecated and a new version built that supports custom fields.
+
+4. The Constant Contact "new unsubscribed contact" trigger now supports custom fields.
+
+5. OAuth signins to the system via Google and Twitter are now done inline rather than in a popup browser window.
+
+6. The green confirmation message at the top center that slides into and out of view is now smaller, primarily so tabs in the Assembly Editor are not obscured.  The confirm message can be closed by clicking on it, as before.
+
+7. The Action Output module's help information now mentions that the "get dynamic action output fields" subassembly can be used to automatically parse dynamic data fields.
+
+8. Fixed an issue that would cause the Admin Console's Native Work Queue screen to show "java.lang.String cannot be cast to java.lang.Integer" whenever failed transactions were in the retry queue.
+
+9. Fixed an issue with the Automation Editor UI that would cause actions in conditional "false" branches to not have the "continue if error" setting selected when editing existing automations.
+
+10. When saving triggers in the automation editor, if any invalid Trigger Filter expressions are entered the editor now displays a warning and highlights the invalid filter expressions.
