@@ -62,6 +62,11 @@ services:
           # You can use a different value if desired
           # Must match the value in MYSQL_DATABASE above
           - APIANT_MYSQL_DATABASE=APIANT
+          
+          # Adjust based on the available server memory, minus what is configured for Tomcat.
+          # On a 16GB server, generally allocate 14GB for Tomcat and 1GB to 1.5GB for MySQL
+          # The minimum allowed value is 134217728, lower values will have no effect
+          - APIANT_MYSQL_INNODB_BUFFER_POOL_SIZE_BYTES=512000000          
       # ----------------------------------------------------------------------------------------------------------------------
       
       # ----------------------------------------------------------------------------------------------------------------------
@@ -350,7 +355,7 @@ services:
           # Separate matches with a pipe "|"
           # The baseline system's config file contains all the matches below by default
           # To disable 401 processing and remove the default matches, you must enter a single value that is junk and won't match any API's domain
-          - APIANT_IGNORE_AUTOMATION_401=api.tumblr.com|pcrecruiter.net
+          - APIANT_IGNORE_AUTOMATION_401=api.tumblr.com|pcrecruiter.net|api.mindbodyonline.com
       
           # If true, the admin will receive an email whenever a user signs into the system
           - APIANT_ADMIN_IS_EMAILED_ON_ALL_LOGINS=false
