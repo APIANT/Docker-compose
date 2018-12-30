@@ -1,1 +1,37 @@
 1. Fixed the "File" app's "text to temporary file" action so it URL-encodes the filename in the generated URL.
+
+2. Fixed the Volusion "new shipped order" trigger so generated order URL's don't contain "www.www".
+
+3. The Collector "collect items into a bucket" action now supports an array of input values.
+
+4. The ONTRAPORT "add or update client" action now has a "bulk mail" input field which can be used to opt-out clients.
+
+5. The MINDBODY "get client by id" action has been deprecated and replaced with a new version that returns all available data fields.
+
+6. Fixed the up/down arrows in the automation builder used to move actions & triggers up and down so that the arrows reliably hide themselves when moused out.
+
+7. Mousing over app tiles in the automation builder now shows the app name and trigger/action name in a tooltip.
+
+8. When building automations, the trigger and action catalogs can now be searched by trigger or action names.  Choose the search mode via the new dropdown control above the search field.
+
+9. When an automation runs in export mode, baseline modules that have a timeout, such as HTTP Transactions, now ignore the timeout setting and use an infinite timeout so as to not interrupt the export.
+
+10. If an Action module's "iterate action assembly for input array data" setting is checked, when run in the assembly editor any test data having semicolons will no longer result in array values being emitted.  Instead, just the first test data array element will be emitted.  This change matches the behavior that occurs when the action runs in an automation.
+
+11. Spintax functionality has been removed from action field mappings and replaced with a "spintax" Transform Text action.
+
+12. If an app has multiple connections and the default connection is automatically disconnected by the system due to an automation receiving a 401 Unauthorized error, when reconnecting an account to the app the system now treats the new account as being the "Default" account.
+
+13. The system's Google sign-in functionality now uses the Google People API instead of the Google+ API, which is being shut down soon.
+
+14. When the system turns off automations due to either 401 errors or due to lack of free memory, the subject in alert emails now starts with "[ACTION REQUIRED]" to make it clear that action must be taken for the automation to be restarted to continue its processing.
+
+15. Fixed an issue introduced in the previous release that affects the ability for nested subassemblies to receive input data streams when assemblies are run in the assembly editor and automation editor.
+
+16. When an automation is invoked by another automation using the "execute automation" system action, the target automation now has an entry written into its history log indicating which automation invoked it.
+
+17. When an automation is turned on or off by another automation using the "turn automation on or off" system action, the target automation now has an entry written into its history log indicating which automation turned it on or off.
+
+18. When an automation is renamed, any references to it in other automations having the "execute automation" or "turn automation on or off" system actions are now also updated so the name matches.
+
+19. In the automation editor dashboard, the automation gear icon menu has a new menu option "Referenced by" which lists automations having a "execute automation" or "turn automation on or off" system action that references the automation.
