@@ -1,9 +1,9 @@
-1. Fixed a null pointer exception that could occur within the "get dynamic action output fields" subassembly.
+1. Conditionals in the automation editor can now be moved up/down.
 
-2. When app credentials are missing, the system's error message is now "no connection found" rather than "authorization information not found".
+2. Additional actions and conditionals can now be added after conditionals in the automation editor.
 
-3. Fixed the OAuth Transaction module so the PATCH verb works instead of returning a null pointer exception.
+3. Conditionals and actions in the automation editor can now be freely moved around anywhere via the up/down arrows that appear when the items are moused over.  This includes moving items to and from conditional branches.
 
-4. Added a new "Automation Templates" account permission.  On non-development servers, this permission provides access to a new automation gear icon menu option "publish as template" that publishes the automation to the system's "templates" account.
+4. Individual actions in the automation editor can now be copied and pasted.  Click an action and select the "copy item" option.  Then click a "+" icon destination and choose the "paste item" option.  An action can be pasted into other automations.
 
-5. When retrying individual failed transactions from the automation history screen, a new option is available to edit the stored data to be submitted for the retry.  This can be used to correct errant trigger data.  When using this new option, if the processing failure occurred in a chain of actions the retry will be performed starting at the first action instead of where processing failed.
+5. Fixed a rare null pointer exception that could be emitted by VTDElement.getText() for certain XML nodes.
