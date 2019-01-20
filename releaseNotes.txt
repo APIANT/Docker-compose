@@ -1,9 +1,25 @@
-1. Conditionals in the automation editor can now be moved up/down.
+1. In the Admin Console's Native Work Queue screen, scheduled retry transactions no longer display the data row uuid or webhook transaction id.  Instead, the retry message is now a hyperlink that can be clicked to open the failed transaction's logs in the Automation Editor.
 
-2. Additional actions and conditionals can now be added after conditionals in the automation editor.
+2. In the Automation Editor's History Details screen, the Data Row ID value is now truncated to a max of 50 characters to avoid long values from overflowing the screen.  The value can now be clicked, which will copy the value to the system clipboard.
 
-3. Conditionals and actions in the automation editor can now be freely moved around anywhere via the up/down arrows that appear when the items are moused over.  This includes moving items to and from conditional branches.
+3. The HTTP Transaction module can now perform HTTP Basic auth to URL's having custom port numbers.
 
-4. Individual actions in the automation editor can now be copied and pasted.  Click an action and select the "copy item" option.  Then click a "+" icon destination and choose the "paste item" option.  An action can be pasted into other automations.
+4. Added an "add or update contact" action for Mautic.
 
-5. Fixed a rare null pointer exception that could be emitted by VTDElement.getText() for certain XML nodes.
+5. The Google Contacts "new contact" trigger has been deprecated b/c it doesn't work correctly.  It is replaced with a "new or updated contact" trigger.
+
+6. The system no longer allows automations that contain invalid field mappings to be saved.  An error message is now returned that lists all invalid field mappings.
+
+7. When an assembly search is performed in the Assembly Editor's catalog, if the query matches an app name now the results contain a separate section containing the app assembly and all of the app's actions, triggers, and subassemblies.  Additional assemblies matching the query are now placed in a separate section of results.  This change causes all matching results to be returned when the query exactly matches an app's name, rather than just the app's assemblies being returned.
+
+8. If a Conditional branch in an automation has no actions, the automation execution engine will now execute any subsequent actions that follow the condition rather than halting.
+
+9. The "Start Work Queue" and "Stop Work Queue" buttons in the Admin Console's Native Work Queue screen have been combined into a single toggle button.
+
+10. The system's cron setting for retrying unprocessed webhooks in the database is now set to the bottom of every hour, rather than once a day at noon.
+
+11. When the system automatically retries unprocessed webhooks, it now retries all in the database rather than only those older than an hour.
+
+12. The Admin Console's Native Work Queue screen now displays a count of how many unprocessed webhooks are in the database.
+
+13. If any unprocessed webhooks are in the database, the Admin Console's Native Work Queue screen now displays a "Retry Unprocessed Webhooks" button that will retry unprocessed webhooks.
