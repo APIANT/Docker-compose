@@ -1,25 +1,41 @@
-1. In the Admin Console's Native Work Queue screen, scheduled retry transactions no longer display the data row uuid or webhook transaction id.  Instead, the retry message is now a hyperlink that can be clicked to open the failed transaction's logs in the Automation Editor.
+1. The Shopify "update order as fulfilled" action now lets the location be specified.
 
-2. In the Automation Editor's History Details screen, the Data Row ID value is now truncated to a max of 50 characters to avoid long values from overflowing the screen.  The value can now be clicked, which will copy the value to the system clipboard.
+2. When unprocessed webhooks are retried, they are no longer placed in the work queue if already in the queue.  The system's previous behavior did not cause duplicate processing, but did cause the admin console to not show a count of unique webhooks queued.
 
-3. The HTTP Transaction module can now perform HTTP Basic auth to URL's having custom port numbers.
+3. Added an appendToTempLog() method to appRPC that can be used from inline Java JSP in assemblies to append content to a temporary log in the same manner as done with the Logging - Write to Log module.  The main motivation is to provide a way to log trace information for troubleshooting web service assemblies.
 
-4. Added an "add or update contact" action for Mautic.
+4. The automation execution engine no longer retries failed actions that are configured to "continue if error" in the action's settings.
 
-5. The Google Contacts "new contact" trigger has been deprecated b/c it doesn't work correctly.  It is replaced with a "new or updated contact" trigger.
+5. The system's retry transaction queue is now pruned every 30 minutes to remove stale transactions, to avoid an ever-growing list in the Admin Console's Native Work Queue screen.
 
-6. The system no longer allows automations that contain invalid field mappings to be saved.  An error message is now returned that lists all invalid field mappings.
+6. Added a Phone Number Parser module that can parse a phone number from any block of text.  The parsed number is formatted as E.164 international format and in the country's national format, plus any extension is parsed separately if found.
 
-7. When an assembly search is performed in the Assembly Editor's catalog, if the query matches an app name now the results contain a separate section containing the app assembly and all of the app's actions, triggers, and subassemblies.  Additional assemblies matching the query are now placed in a separate section of results.  This change causes all matching results to be returned when the query exactly matches an app's name, rather than just the app's assemblies being returned.
+7. Added a "parse phone number" action for the Transform Text app.
 
-8. If a Conditional branch in an automation has no actions, the automation execution engine will now execute any subsequent actions that follow the condition rather than halting.
+8. When editing an automation in the Automation Editor, the Save button now highlights whenever there is an unsaved change.
 
-9. The "Start Work Queue" and "Stop Work Queue" buttons in the Admin Console's Native Work Queue screen have been combined into a single toggle button.
+9. Fixed an issue that would cause the assembly editor to become empty after saving an assembly with a modified name or any other change that would cause the catalog to refresh itself.
 
-10. The system's cron setting for retrying unprocessed webhooks in the database is now set to the bottom of every hour, rather than once a day at noon.
+10. The DateTime - Translation module has been deprecated and replaced with a new version that now expects epoch input values to be in seconds only.
 
-11. When the system automatically retries unprocessed webhooks, it now retries all in the database rather than only those older than an hour.
+11. The Transform Date Time "modify and reformat date time" action has been deprecated and replaced with a new version that now expects epoch input values to be in seconds only.
 
-12. The Admin Console's Native Work Queue screen now displays a count of how many unprocessed webhooks are in the database.
+12. The ONTRAPORT integration has been deprecated and replaced with a new version that uses their latest API.
 
-13. If any unprocessed webhooks are in the database, the Admin Console's Native Work Queue screen now displays a "Retry Unprocessed Webhooks" button that will retry unprocessed webhooks.
+13. The action field mappings screen in the automation editor now has a checkbox at the bottom left for showing only required fields.
+
+14. The "show only mapped fields" checkbox at the lower left of the action field mappings screen in the automation editor now does its processing in a manner that doesn't hang the browser when a large number of fields are present.
+
+15. Fixed an issue that would cause the list of action field mappings to not scroll correctly when configuring a newly added action that required fetching dynamic fields.
+
+16. In the Admin Console's Protocol Thread screen, the Deactivate button is now visible to accounts other than the super admin account, so developers can start and stop their unary protocol threads in order to make code changes.
+
+17. If an automation using an "execute automation" action is deployed and it doesn't have an automation selected, a SQL exception no longer occurs.
+
+18. The MySQL "any new row" trigger has been deprecated and replaced with a new version that allows the selection of a column used to order the rows by newest first.
+
+19. Added a "new or updated row" trigger for MySQL.
+
+20. The SQL Server "any new row" trigger has been deprecated and replaced with a new version that allows the selection of a column used to order the rows by newest first.
+
+21. Added a "new or updated row" trigger for SQL Server.
