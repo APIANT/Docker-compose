@@ -1,41 +1,53 @@
-1. The Shopify "update order as fulfilled" action now lets the location be specified.
+1. The System "execute automation" action has been deprecated and replaced with a new version that will return any error raised by the executed automation when the "wait to complete" option is enabled.
 
-2. When unprocessed webhooks are retried, they are no longer placed in the work queue if already in the queue.  The system's previous behavior did not cause duplicate processing, but did cause the admin console to not show a count of unique webhooks queued.
+2. The existing Zoho CRM integration has been deprecated b/c it uses their deprecated v1.0 API.  A new Zoho CRM integration that uses their v2.0 API and OAuth has been added.
 
-3. Added an appendToTempLog() method to appRPC that can be used from inline Java JSP in assemblies to append content to a temporary log in the same manner as done with the Logging - Write to Log module.  The main motivation is to provide a way to log trace information for troubleshooting web service assemblies.
+3. When system upgrades are installed, deprecated app assemblies are now imported before non-deprecated app assemblies in order to avoid naming conflicts.
 
-4. The automation execution engine no longer retries failed actions that are configured to "continue if error" in the action's settings.
+4. The XML Builder and JSON Builder modules now emit their generated output in the Assembly Editor even when an parse error occurs, so that the generated output can be viewed with the stream inspector to help spot the error.
 
-5. The system's retry transaction queue is now pruned every 30 minutes to remove stale transactions, to avoid an ever-growing list in the Admin Console's Native Work Queue screen.
+5. Greatly improved the performance of saving existing assemblies from the Assembly Editor after modules had been removed from the assembly diagram.  The performance issue was magnified on busy systems with lots of automations processing due to database locking.
 
-6. Added a Phone Number Parser module that can parse a phone number from any block of text.  The parsed number is formatted as E.164 international format and in the country's national format, plus any extension is parsed separately if found.
+6. In the Admin Console's User Roles screen, roles can now be deleted even when assigned to user accounts.
 
-7. Added a "parse phone number" action for the Transform Text app.
+7. The Admin Console's User Roles screen has a new button "View Accounts" that opens the User Accounts screen to show which accounts have the selected role.
 
-8. When editing an automation in the Automation Editor, the Save button now highlights whenever there is an unsaved change.
+8. Improved the mouseover tooltip text for the Automation Editor's account settings popover's alert email field to make it clear that when any email addresses are entered that they are used instead of the account's email for delivering alerts.
 
-9. Fixed an issue that would cause the assembly editor to become empty after saving an assembly with a modified name or any other change that would cause the catalog to refresh itself.
+9. If an Action module has a static field that is required and the field has no data, now an error is raised when running in the Assembly Editor or in an automation.
 
-10. The DateTime - Translation module has been deprecated and replaced with a new version that now expects epoch input values to be in seconds only.
+10. The root admin account's password can now be changed from the Admin Console's User Accounts screen via the "Change Admin Password" button.
 
-11. The Transform Date Time "modify and reformat date time" action has been deprecated and replaced with a new version that now expects epoch input values to be in seconds only.
+11. The Salesforce "create object record" action no longer flags fields as required when they will be defaulted by Salesforce.
 
-12. The ONTRAPORT integration has been deprecated and replaced with a new version that uses their latest API.
+12. The Assembly Editor no longer changes the browser's tab name to "Unnamed" when an unnamed assembly is selected in the editor.
 
-13. The action field mappings screen in the automation editor now has a checkbox at the bottom left for showing only required fields.
+13. Fixed error handling for the HubSpot "add or update customer" action so that all errors are reported.
 
-14. The "show only mapped fields" checkbox at the lower left of the action field mappings screen in the automation editor now does its processing in a manner that doesn't hang the browser when a large number of fields are present.
+14. Deprecated the Unleashed Software "create new customer" action and added an "add customer" action.
 
-15. Fixed an issue that would cause the list of action field mappings to not scroll correctly when configuring a newly added action that required fetching dynamic fields.
+15. Added a "find sales person by email" action for Unleashed Software.
 
-16. In the Admin Console's Protocol Thread screen, the Deactivate button is now visible to accounts other than the super admin account, so developers can start and stop their unary protocol threads in order to make code changes.
+16. Added a "new lead" trigger for Intercom.
 
-17. If an automation using an "execute automation" action is deployed and it doesn't have an automation selected, a SQL exception no longer occurs.
+17. In the Automation Editor, after copying an action it can now be pasted as the first action of a new automation.  Previously nothing would be pasted in this scenario.
 
-18. The MySQL "any new row" trigger has been deprecated and replaced with a new version that allows the selection of a column used to order the rows by newest first.
+18. The "Text Replace" module has been renamed to "Text Replace [Data Stream]".
 
-19. Added a "new or updated row" trigger for MySQL.
+19. Added a new "Text Replace [Single Value]" module that can perform one or more text replacements in an input text string value. 
 
-20. The SQL Server "any new row" trigger has been deprecated and replaced with a new version that allows the selection of a column used to order the rows by newest first.
+20. The automation gear icon's "Reset" option is now available for webhook trigger automations, in order to facilitate the removal of two-way sync data from the database.
 
-21. Added a "new or updated row" trigger for SQL Server.
+21. The Fetch Paginated Results - Iterator module now stops iterating if the response doesn't contain any child nodes under the data row path's matching node.
+
+22. The OAuth Transaction v2.0a module's Access Token URL and Refresh Token URL can now contain query parameters starting with "HEADER_" to indicate header values to send.  The query parameters starting with "HEADER_" are removed from the URL, the "HEADER_" prefix is stripped from the query parameter name, and the remaining portion of the name and the query parameter value are sent as a header name/value pair.
+
+23. When switching accounts in the Automation Editor, transaction timestamps in the automation history details now display in the selected account's timezone, rather than always being in the timezone for the first account used to view automation history details.
+
+24. The Trigger Two-Way Sync module will now emit the first items processed when running in an automation and when the trigger is an instant trigger.
+
+25. The existing HubSpot integration has been deprecated and a new HubSpot app has been created that now uses OAuth rather than an API key.
+
+26. Added a button at the top right of the automation history detail's screen to download the activity or debug log being viewed.
+
+27. Booker Merchant has been integrated with a "new customer" trigger.
