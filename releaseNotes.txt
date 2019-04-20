@@ -1,53 +1,61 @@
-1. The System "execute automation" action has been deprecated and replaced with a new version that will return any error raised by the executed automation when the "wait to complete" option is enabled.
+1. The HTTP Transaction module and its variants now send POST/PUT/PATCH text payloads using UTF-8 encoding.  The HubSpot API in particular was returning an error when text payloads contained international characters.
 
-2. The existing Zoho CRM integration has been deprecated b/c it uses their deprecated v1.0 API.  A new Zoho CRM integration that uses their v2.0 API and OAuth has been added.
+2. The Datetime - Translation module has been refactored.  Now it always calculates its translations on the server, rather than in the browser when in the Assembly Editor.  This is because the underlying JavaScript library would return varying results across browsers.  The timezone offset, when provided, is now always applied.  The timezone offset is now specified in seconds rather than millis.  The timezone offset can now be specified as "ACCOUNT", in which case the user account's timezone offset is used.
 
-3. When system upgrades are installed, deprecated app assemblies are now imported before non-deprecated app assemblies in order to avoid naming conflicts.
+3. The Transform Date Time app's "modify and reformat date time" action now has an input field to specify the timezone offset.  A timezone offset should only be specified when the input values have no timezone component.
 
-4. The XML Builder and JSON Builder modules now emit their generated output in the Assembly Editor even when an parse error occurs, so that the generated output can be viewed with the stream inspector to help spot the error.
+4. The Asana "create new task" action has been deprecated and replaced with a new version that support HTML notes and custom fields.
 
-5. Greatly improved the performance of saving existing assemblies from the Assembly Editor after modules had been removed from the assembly diagram.  The performance issue was magnified on busy systems with lots of automations processing due to database locking.
+5. When an automation that has an instant trigger is deployed, the deployed automation will now only require its instant trigger to be configured when the trigger assembly's Webhook module has the "requires test transaction" option checked.
 
-6. In the Admin Console's User Roles screen, roles can now be deleted even when assigned to user accounts.
+6. The existing Data Rows - Filter, Fatal Error [Data Stream], Data Rows - Conditional Loop, and Conditional Execution [Data Stream] modules have been renamed to append "v1" to their names and new "v2" modules have been added that allow the right side of criteria expressions to be a data path, allowing for logic to consist of the comparison of two values within each data row.  The right side criteria expressions can also be a string or number value as before.  The v2 modules now also log the two values being compared and the result of each comparison, to aid troubleshooting.
 
-7. The Admin Console's User Roles screen has a new button "View Accounts" that opens the User Accounts screen to show which accounts have the selected role.
+7. The Transform Number "step from starting number" action has been renamed to "step from starting number (automation scope)" and deprecated modules have been replaced with their latest versions.
 
-8. Improved the mouseover tooltip text for the Automation Editor's account settings popover's alert email field to make it clear that when any email addresses are entered that they are used instead of the account's email for delivering alerts.
+8. Added a "step from starting number (account scope)" action to the Transform Number app.
 
-9. If an Action module has a static field that is required and the field has no data, now an error is raised when running in the Assembly Editor or in an automation.
+9. The Asana "new or updated task in project" trigger has been deprecated and replaced with a new version that emits custom fields.
 
-10. The root admin account's password can now be changed from the Admin Console's User Accounts screen via the "Change Admin Password" button.
+10. The Asana "new task assigned to you in workspace" trigger has been deprecated and replaced with a new version that emits custom fields.
 
-11. The Salesforce "create object record" action no longer flags fields as required when they will be defaulted by Salesforce.
+11. Triggers, actions, and conditionals in the automation editor can now be double-clicked to edit their settings.
 
-12. The Assembly Editor no longer changes the browser's tab name to "Unnamed" when an unnamed assembly is selected in the editor.
+12. Fixed a runtime performance issue with all two-way sync triggers that occurred as more and more sync records were stored in the database.
 
-13. Fixed error handling for the HubSpot "add or update customer" action so that all errors are reported.
+13. The automation dashboard gear icon menu has been redesigned with four top-level menus and nested submenus, rather than having a large number of menu items at the top level.
 
-14. Deprecated the Unleashed Software "create new customer" action and added an "add customer" action.
+14. The Unary Protocol Thread appRPC.handleReceivedUnaryProtocolPayload() Java JSP method now returns information when either no accounts match the supplied inputs or when no active automations are found, rather than returning an empty result.
 
-15. Added a "find sales person by email" action for Unleashed Software.
+15. The Xero app assembly's user instructions have been updated to reflect changes with openssl.
 
-16. Added a "new lead" trigger for Intercom.
+16. Added a "lookup row" action for Google Sheets.
 
-17. In the Automation Editor, after copying an action it can now be pasted as the first action of a new automation.  Previously nothing would be pasted in this scenario.
+17. Added a "find cancelled appointment" action for Cliniko.
 
-18. The "Text Replace" module has been renamed to "Text Replace [Data Stream]".
+18. Fixed an issue with the automation execution engine where processing thousands of data rows would get slower and slower.  Now, processing speeds up instead and total throughput of the automation execution engine has been improved.
 
-19. Added a new "Text Replace [Single Value]" module that can perform one or more text replacements in an input text string value. 
+19. On a non-development server, if an automation is published to the 'templates' account and then the template is deleted in the 'templates' account, if the automation is later republished to the 'templates' account it will now appear rather than remaining in a deleted state.
 
-20. The automation gear icon's "Reset" option is now available for webhook trigger automations, in order to facilitate the removal of two-way sync data from the database.
+20. When saving a copy of an automation, the selected folder is now honored rather than always being placed into the same folder as the source automation.
 
-21. The Fetch Paginated Results - Iterator module now stops iterating if the response doesn't contain any child nodes under the data row path's matching node.
+21. Shopify assemblies have been updated to send a Content-Type header due to a change in the Shopify API behavior.
 
-22. The OAuth Transaction v2.0a module's Access Token URL and Refresh Token URL can now contain query parameters starting with "HEADER_" to indicate header values to send.  The query parameters starting with "HEADER_" are removed from the URL, the "HEADER_" prefix is stripped from the query parameter name, and the remaining portion of the name and the query parameter value are sent as a header name/value pair.
+22. The Docker MySQL is now configured to not perform binary logging, since there is no replication.
 
-23. When switching accounts in the Automation Editor, transaction timestamps in the automation history details now display in the selected account's timezone, rather than always being in the timezone for the first account used to view automation history details.
+23. Fixed the Date Time "every weekday at" trigger so it correctly uses the configured day of week.
 
-24. The Trigger Two-Way Sync module will now emit the first items processed when running in an automation and when the trigger is an instant trigger.
+24. The system's webhook receiver now sends an immediate response back to the caller and performs its processing in secondary threads rather than doing any processing that makes the webhook caller wait for a response.
 
-25. The existing HubSpot integration has been deprecated and a new HubSpot app has been created that now uses OAuth rather than an API key.
+25. The Action Two-Way Sync module no longer marks transactions as successfully processed when a previous failure in its embedded subassembly is retried.  Now the embedded subassembly will re-execute the failed transaction as expected when retried.
 
-26. Added a button at the top right of the automation history detail's screen to download the activity or debug log being viewed.
+26. The Subassembly Output (Sync Action) module no longer requires a data path to be entered for the existing item flag when the "create" action type is selected.  The field's help button information has been updated to describe when an existing item data path should be entered.
 
-27. Booker Merchant has been integrated with a "new customer" trigger.
+27. When a Trigger Filter filters a data row, the system no longer writes the filtered data row id to the database, meaning that if the data row later meets the filter criteria it will now be processed.  This is most useful for updated items, where the most recently modified records are fetched from the API.
+
+28. Populated dropdowns in the automation editor's triggers and actions settings now re-fetch data every time they are opened.
+
+29. The automation editor's field mappings screen and conditional settings screen have been slightly redesigned.  The plus icons have been removed.  Now, the mappable fields appear when a field's edit area is focused.  Field help text now appears as a tooltip when a field's edit area is focused.  Each field edit area is shorter so more fit onscreen at once.  The entire screen of action settings can now be scrolled down so that the mappable fields fill the screen.  The checkboxes to filter fields by those required or mapped have been repositioned to the top right.
+
+30. Tooltips are no longer hyperactive, with the hover delay now increased to 1 second.
+
+31. The maxAutomationLogAgeDays config setting (in Docker APIANT_MAX_AUTOMATION_LOG_AGE_DAYS) can now be set to -1 to disable all automation logging and data storage.  A setting of -1 now also causes no webhook data to be written to the system's webhook log.

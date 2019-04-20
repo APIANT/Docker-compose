@@ -178,9 +178,11 @@ services:
           - APIANT_LOGGING_IS_DEBUG_OUTPUT_ENABLED=false
           
           # The maximum amount of data logged into any single automation or batch job log file
+          # Ignored if APIANT_IS_WRITING_LOGS_TO_STDOUT is true 
           - APIANT_LOGGING_MAX_LOGFILE_SIZE_MB=250
           
-          # Configure to store generated automation & batch job logs in Amazon S3 
+          # Configure to store generated automation & batch job logs in Amazon S3
+          # Ignored if APIANT_IS_WRITING_LOGS_TO_STDOUT is true 
           - APIANT_AMAZON_S3_ACCESS_KEY=
           - APIANT_AMAZON_S3_SECRET_KEY=
           # S3 Region, e.g. us-west-2
@@ -260,14 +262,18 @@ services:
       
           # If true, automation and batch job logs are only written to stdout
           # Error messages are written to stderr, but retain their email alerts
+          # If APIANT_MAX_AUTOMATION_LOG_AGE_DAYS is -1 then no automation logging info is written to stdout regardless of this setting
+          # If APIANT_MAX_BATCH_JOB_LOG_AGE_DAYS is -1 then no batch job logging info is written to stdout regardless of this setting
           - APIANT_IS_WRITING_LOGS_TO_STDOUT=false
       
-          # The maximum age of automation logs to keep, leave empty for no maximum
-          # Has no effect if isWritingLogsToStdout is set to true
+          # The maximum age of automation logs to keep when APIANT_IS_WRITING_LOGS_TO_STDOUT is false 
+          # Set to zero for no maximum, logs will be retained forever
+          # Set to -1 to turn off all automation logging.  Also causes the system to not store any processed data, including transaction history.
           - APIANT_MAX_AUTOMATION_LOG_AGE_DAYS=90
           
-          # The maximum age of batch job logs to keep, leave empty for no maximum
-          # Has no effect if isWritingLogsToStdout is set to true
+          # The maximum age of batch job logs to keep when APIANT_IS_WRITING_LOGS_TO_STDOUT is false
+          # Set to zero for no maximum, logs will be retained forever
+          # Set to -1 to turn off all automation logging
           - APIANT_MAX_BATCH_JOB_LOG_AGE_DAYS=90
           
           # If true, end users can sign into the system using popular OAuth social apps
