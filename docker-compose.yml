@@ -378,6 +378,7 @@ services:
         - 8080
     volumes:
       - /home/data/apiant/appLogs:/usr/local/tomcat/webapps/apiant/appLogs
+      - /home/data/apiant/appModules:/usr/local/tomcat/webapps/apiant/appLucene
       - /home/data/apiant/appModules:/usr/local/tomcat/webapps/apiant/appModules
       - /home/data/apiant/appResources:/usr/local/tomcat/webapps/apiant/appResources
       - /home/data/apiant/build:/usr/local/tomcat/webapps/apiant/build

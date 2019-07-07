@@ -1,53 +1,75 @@
-1. The Trigger (Gated) module has been deprecated.
+1. The performance of the appRPC handleReceivedUnaryProtocolPayload() method, used by Unary Protocol Threads to invoke automations, has been greatly improved by optimizing a SQL query to utilize an existing index.
 
-2. Added a Trigger - Emit Items Meeting Threshold module.  The module allows triggers to be built that fire one time when data row values meet a configured criteria.  An example is when city temperatures fall below freezing.  The first time a city falls below freezing the data row would be emitted.  It won't be emitted again until the temperature rises above freezing and then later falls back below freezing.
+2. When dragging items in the assembly editor, if a modal opens the drag is now halted.  Previously the dragging would not stop, making it impossible to click in the modal.
 
-3. When deploying automations that use the new "execute automation" action, the system now updates references if the referenced automation is also deployed in the group.  This functionality was previously being done for the now-deprecated "execute automation [DEPRECATED]" action, but the system's code that maintains references was not updated when the new action was added.
+3. The automation name entry field at the top of the automation builder screen is now limited to 100 characters.
 
-4. Fixed a MySQL deadlock that would occur if multiple payloads to the same webhook were received simultaneously. 
+4. The Transform Date Time "modify and reformat date time" action now supports a timezone offset value of "ACCOUNT_UTC", which converts inputs in the account's timezone to GMT.
 
-5. The buttons in the Admin Console's Native Work Queue screen now keep their position vertically centered.
+5. When an action in an automation is configured to "continue if error", an error is no longer written into the automation's task history log.
 
-6. The Admin Console's Native Work Queue screen now displays automation names and automation owner names in the list of executing automations.
+6. Automation names in the automation editor's dashboard are now fixed width, to avoid the screen jumping around as polling countdown timers are updated.
 
-7. Fixed the DateTime - Translation module so that an input of 2050-01-01 and an output format of EPOCH_SECONDS will return the correct result.  Dates well in the future were causing a math overflow.
+7. Fixed a null pointer exception that would occur in the server runtime for the Trigger Two-Way Sync module.
 
-8. In the Assembly Editor when closing a diagram that has unsaved changes, the dialog prompt now includes a Cancel button.
+8. When sharing items in the assembly editor, the share settings dialog now has a checkbox to show only accounts the item is currently shared with.
 
-9. The Data Rows - Sort module now correctly sorts when run in the Assembly Editor when some of the values to be sorted are empty.  The problem did not occur in automations.
+9. Accounts having the "Automation Templates" permission now see template annotation entry fields underneath all trigger and action settings when editing automations in the automation editor.  These annotations will appear when template automations are initially configured by end users who install the templates and turn them on for the first time.  The annotation text can contain HTML markup, for embedding links/images/videos/etc.
 
-10. Newly deployed automations can now be edited in the sending account and the changes can be redeployed to the destination accounts.  When a destination account edits a deployed automation, a warning message now appears indicating that any edits may be lost if the sender later redeploys the automation.
+10. The search entry field in the automation editor's dashboard now requires pressing ENTER to search.  An onscreen prompt indicates this.  A "Waiting..." spinner now appears when searching, b/c searching in dashboards with lots of automations can take a few seconds to complete.
 
-11. Fixed an issue with the VTD-XML wrappers where an added node would not get serialized into the generated XML.  This was causing the Data Streams - Join module to not work correctly in some situations.
+11. When saving automations in the automation editor, a "Validating..." spinner now appears briefly as the system validates the automation's field mappings.  This can take a few seconds for automations with lots of actions and fields.
 
-12. The "SystemHealthCheck" web service is always allowed to process even when all native work queue threads are busy.
+12. Added a "Conditional Execution" module that is a hybrid of the existing [Single Value] and [Data Stream] variations.  This module allows two scalar values to be tested, while allowing the nested item to emit either a scalar value or a data stream.  It fills a gap where the existing [Single Value] module cannot emit a data stream and the existing [Data Stream] module cannot easily test two scalar values without having to place the left side value into a data stream first.  An expected common usage scenario is to conditionally execute the nested item based on the output from the When In module.
 
-13. When an account is closed and the option to wipe all data is used, the account no longer appears in the Admin Console's User Accounts screen or in the Switch Account dialog's list of accounts.
+13. The "Get dynamic action output fields" subassembly has been deprecated and replaced with module "Action - Extract Output Data Fields" that provides equivalent functionality but with maximum runtime performance by using native Java on the server.
 
-14. The Transform Date Time app's "modify and reformat date time" action now supports output formats of EPOCH_MILLIS_MIDNIGHT and EPOCH_SECONDS_MIDNIGHT, which round the time portion to 12am.
+14. The "Show only required fields" and "Show only mapped fields" checkbox functionality in the automation editor's action settings has been optimized so it completes faster by minimizing rendering of the fields as they are hidden or shown.
 
-15. Added a Conditional Value module that emits one of two possible values depending on if the input value meets the specified criteria.
+15. Internal changes have been made to help reduce the system's database storage for automation history going forward.  Existing data already stored in the database is not modified.
 
-16. Fixed the Fetch Paginated Results - Breadcrumbs module so it iterates correctly rather than endlessly fetching the first page of results.
+16. In the automation editor, when clicking on action data fields the popover of mappable data fields now renders the popover immediately and then renders the list of fields separately, so that the popover can appear as soon as a field is clicked rather than being delayed to wait for all fields to render first.
 
-17. The system now refreshes OAuth v2 access tokens in 15 minutes, rather than an hour.  This is primarily being changed to accommodate the Booker API, whose tokens expire in 30 minutes.
+17. Text entry field borders no longer initialize to black and then quickly transition to gray.  Instead, they initialize to gray.
 
-18. Fixed an issue with the VTD-XML wrappers where child nodes could not be added to a parent node where the parent node XML was in the form of "<root/>".  This was causing the Data Streams - Join module to not work correctly when joining nodes to empty data streams.
+18. Action parameters can now be optionally data-mapped.  When editing an action in the automation editor, data-mappable parameters will have a "Data map?" checkbox next to them.  When checked, the parameter value can be mapped to a field or hardcoded by hand.  The data-mapped value can either be the item's name or the item's id.  In the case of populated dropdowns, the action will fetch all the values of the dropdown when the automation runs and compare the contents to the data-mapped value.  The first item with a name or id matching the data-mapped value will be used.  Data-mapped parameters are not currently available for actions that have dynamic input fields or dynamic output fields.  When a template is installed and configured, any data-mapped parameters are not shown in the initial configuration dialog when the installed template is first turned on.
 
-19. When configuring Trigger Filters in the automation editor, clicking the Refresh Fields button will now populate the trigger filter field dropdowns.
+19. The Trigger Two-Way Sync module will no longer emit an item for processing if its id is in the database and if its created timestamp equals its last modified timestamp.
 
-20. In the automation editor's action field mappings screen, the popover of mappable data fields is now positioned in the middle of the screen and is wider and taller.
+20. The Quickbase "add row" and "update row" actions now add/update data values in a manner that no longer causes surrounding whitespace characters.
 
-21. Fixed an issue where after turning on a newly deployed automation, if the automation editor displayed the "Initial Settings" dialog the editor would save the automation with invalid field mappings.
+21. Fixed an issue where automations would by default not send error alert emails to their owners.
 
-22. Re-implemented the logic that controls visibility of automation gear menu items in the automation editor to fix an intermittent issue where sometimes menu options that should have been visible were hidden instead.
+22. Automation alert emails sent to both the system admin and to the owners of automations now have a link at the bottom to suppress email alerts from the automation for errors starting with the same error message.
 
-23. Fixed the QuickBase "create row" action so that connection credentials are correctly retrieved.
+23. Automation alert emails sent to the system admin now have a link at the bottom to stop receiving all email alerts for the automation, plus a link to stop receiving all email alerts for all automations in the account (newly created automations in the account may still send error alerts, however).
 
-24. Added a QuickBase "update row" action.
+24. The polling schedule and daily execution window for polling automations are now retained when polling automations are exported and imported, deployed, or created from templates.
 
-25. When dragging a wire in the Assembly Editor, if a modal opens the wire is now destroyed, rather than always following the mouse afterwards and not being able to get rid of it without reloading the editor.
+25. Accounts having the "Assembly Developer" or "Switch Account" permissions will see a new automation gear menu option under the "Processing" menu for two-way sync automations named "Two-way sync mappings" that opens a new screen for managing two-way sync mappings in the database.  Mappings can be searched, modified, and deleted.
 
-26. The "Refresh Fields" button in the automation editor's trigger and action settings dialogs will now appear when adding triggers and actions that have dynamic fields, rather than only when editing existing ones.
+26. The default automation email alert delivery frequency is now daily instead of immediately.  The setting can be changed for each account from the automation editor's Settings menu under the account at the top right.
 
-27. Protocol thread logs can now be purged from the Admin Console's Protocol Threads screen.
+27. The Salesforce "Two-way sync add or update object record" action now supports matching logic.
+
+28. When wires are joined to modules in the assembly editor, if the assembly execution engine needs to be run a progress dialog now appears instead of just a message in green at the top of the screen.
+
+29. The system no longer stores processed data rows in the database due to causing large database storage and slow search performance.  Now, the system stores processed data rows (if the system and automation are configured to store processed data) on the filesystem using the Lucene library.  This change is expected to greatly reduce database storage and improve automation history search performance.  Existing data rows currently in the database will eventually be pruned based on the system's configured setting for automation history log age.
+
+30. The baseline docker compose file now persists the appLucene directory.
+
+31. The Subassembly Output (Sync Action) module now only emits the selected data stream rather than all input data streams, so that the Action Two-Way Sync module works as expected without reporting a runtime error that expected information cannot be found.
+
+32. Fixed the Trigger Two-Way Sync module so it won't hang the automation's execution when processing the first sync.
+
+33. The Trigger Two-Way Sync module has been deprecated and replaced with a new version that supports enhanced two-way sync logic where items updated in one system are linked to a record in the other system on-the-fly by using matching logic in the create actions.  The new module no longer uses created timestamps or has the option to determine when items are created based on equal timestamps or the item not being in the database.
+
+34. Accounts having the "Assembly Developer" or "Switch Account" permissions will see a new automation gear menu option under the "Processing" menu for polling automations named "Manage stored data" that opens a new screen for managing polling data in the database.  This will primarily consist of data row unique ids for successfully processed data rows, but may also include other data stored by the automation.  Entries can be searched, modified, and deleted.
+
+35. The Recurly integration now uses their latest API version.
+
+36. The OAuth URL's for GoToAssist, GoToMeeting, GoToTraining, and GoToWebinar have been updated.
+
+37. Two memory leaks have been fixed in the 3rd-party UI library the system uses.  One leak caused any data fetched via HTTP to never be released.  The other leak caused all UI screen elements to never be released, even after being deleted.  The memory leaks would cause the UI to become slow and unresponsive or for the browser tabs to eventually run out of memory and crash.
+
+38. Fixed many additional memory leaks both in system UI code and in the 3rd-party UI library the system uses that were causing memory to not be freed in the Assembly Editor when diagrams were closed.
