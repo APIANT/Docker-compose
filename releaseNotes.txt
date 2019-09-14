@@ -1,75 +1,65 @@
-1. The performance of the appRPC handleReceivedUnaryProtocolPayload() method, used by Unary Protocol Threads to invoke automations, has been greatly improved by optimizing a SQL query to utilize an existing index.
+1. The Conditional Execution [Data Stream] v2, Data Rows - Filter v2, Data Rows - Conditional Loop v2, and Fatal Error [Data Stream] v2 modules all now support scalar values in the left-side logic tests.
 
-2. When dragging items in the assembly editor, if a modal opens the drag is now halted.  Previously the dragging would not stop, making it impossible to click in the modal.
+2. Automation field mappings are now initially collapsed.  Each trigger and action can now be individually expanded and collapsed to help make finding fields easier.
 
-3. The automation name entry field at the top of the automation builder screen is now limited to 100 characters.
+3. Fixed the automation field mappings search functionality so field names having spaces can now be searched.
 
-4. The Transform Date Time "modify and reformat date time" action now supports a timezone offset value of "ACCOUNT_UTC", which converts inputs in the account's timezone to GMT.
+4. Webhook automations no longer process queued webhooks if the automation is turned off.  The queued webhooks will be processed when the automation is turned back on, according to the system's schedule for retrying unprocessed webhooks.
 
-5. When an action in an automation is configured to "continue if error", an error is no longer written into the automation's task history log.
+5. When a webhook automation is reset (via the gear icon menu option in the dashboard) any unprocessed webhooks in the work queue are now purged.
 
-6. Automation names in the automation editor's dashboard are now fixed width, to avoid the screen jumping around as polling countdown timers are updated.
+6. The automation editor and assembly editor are now fully supported on tablet devices.  Testing has been done on a 12.9 inch iPad Pro.  Notable changes in the assembly editor to support the touch interface include the following:  To access the right-click context menu of catalog items, double tap them.  To access the right-click context menu of the main canvas, use the "Options" link at the bottom right above the Zoom slider.  To select multiple modules for copy/delete, instead of dragging a selection region click the "Select" link at the bottom right above the Zoom slider.  Then tap the modules to be selected.  Tap selected modules to unselect.  Tap the background to unselect all.  Click the "Stop Selection" link at the bottom right to exit the selection mode, or click the "Options" link at the bottom right which also exits selection mode.  The functionality of module right-click context menus is now mirrored in the module settings popover that appears when modules are tapped.  When wires are dragged, the end of the wire is placed above the fingertip, but to connect the wire move your fingertip over a destination wire node.  This is done so you can see the dragged wire node turn green when a valid destination can be connected.  The vertical and horizontal splitter controls are much wider so they can be easily tapped or dragged.  Controls that are normally hidden until moused over are instead always visible.  3rd-party editor libraries used for editing code and for field mappings in the automation editor have been updated to their latest versions so that momentum scrolling is available.
 
-7. Fixed a null pointer exception that would occur in the server runtime for the Trigger Two-Way Sync module.
+7. Fixed an issue with the automation editor where actions having validated parameters could not be saved due to a runtime error.
 
-8. When sharing items in the assembly editor, the share settings dialog now has a checkbox to show only accounts the item is currently shared with.
+8. In the assembly editor, when wire connectors are joined/unjoined the diagram now automatically scrolls if needed to keep them in view.
 
-9. Accounts having the "Automation Templates" permission now see template annotation entry fields underneath all trigger and action settings when editing automations in the automation editor.  These annotations will appear when template automations are initially configured by end users who install the templates and turn them on for the first time.  The annotation text can contain HTML markup, for embedding links/images/videos/etc.
+9. Canvas dialog windows are now resized to remain in view if the browser window is resized.
 
-10. The search entry field in the automation editor's dashboard now requires pressing ENTER to search.  An onscreen prompt indicates this.  A "Waiting..." spinner now appears when searching, b/c searching in dashboards with lots of automations can take a few seconds to complete.
+10. When templates having webhook triggers are installed, the system now requires that the automation be edited and the trigger configured.  Previously this was only needed if the webhook trigger had the "requires test transaction" checkbox in the Webhook module checked, but this did not account for triggers that register the webhook URL via API calls.
 
-11. When saving automations in the automation editor, a "Validating..." spinner now appears briefly as the system validates the automation's field mappings.  This can take a few seconds for automations with lots of actions and fields.
+11. Added "Delete file", "Delete folder", and "Rename file" actions for the FTP app.
 
-12. Added a "Conditional Execution" module that is a hybrid of the existing [Single Value] and [Data Stream] variations.  This module allows two scalar values to be tested, while allowing the nested item to emit either a scalar value or a data stream.  It fills a gap where the existing [Single Value] module cannot emit a data stream and the existing [Data Stream] module cannot easily test two scalar values without having to place the left side value into a data stream first.  An expected common usage scenario is to conditionally execute the nested item based on the output from the When In module.
+12. The Quickbooks Online baseline integration has been migrated to use OAuth v2.0 instead of v1.0a.  The integration was not deprecated and replaced with a copy b/c of the large number of existing automations, plus the fact that the existing integrations will stop working anyway when Intuit turns off support for OAuth v1.0a in December.  All existing Quickbooks Online automations will need to have their connected accounts reconnected in order to work.  Systems using Quickbooks Online need to obtain OAuth v2.0 API keys and load them into the system's keychain via the Admin Console.
 
-13. The "Get dynamic action output fields" subassembly has been deprecated and replaced with module "Action - Extract Output Data Fields" that provides equivalent functionality but with maximum runtime performance by using native Java on the server.
+13. Fixed an issue with the Data Rows - Sort module where the server-side Java implementation would throw a "Comparison method violates its general contract" runtime error if all the selected XML nodes did not have the same schema where some of the sort criteria nodes were not present.
 
-14. The "Show only required fields" and "Show only mapped fields" checkbox functionality in the automation editor's action settings has been optimized so it completes faster by minimizing rendering of the fields as they are hidden or shown.
+14. In the Switch Account dialog, user accounts can now be looked up by UUID.
 
-15. Internal changes have been made to help reduce the system's database storage for automation history going forward.  Existing data already stored in the database is not modified.
+15. The automation execution engine now records the evaluation of trigger filters into the debug log, to help troubleshooting trigger filter logic.
 
-16. In the automation editor, when clicking on action data fields the popover of mappable data fields now renders the popover immediately and then renders the list of fields separately, so that the popover can appear as soon as a field is clicked rather than being delayed to wait for all fields to render first.
+16. Connections in the automation editor's connections screen are now searchable by app name.
 
-17. Text entry field borders no longer initialize to black and then quickly transition to gray.  Instead, they initialize to gray.
+17. The HipChat integration has been deprecated b/c the app is being shut down.
 
-18. Action parameters can now be optionally data-mapped.  When editing an action in the automation editor, data-mappable parameters will have a "Data map?" checkbox next to them.  When checked, the parameter value can be mapped to a field or hardcoded by hand.  The data-mapped value can either be the item's name or the item's id.  In the case of populated dropdowns, the action will fetch all the values of the dropdown when the automation runs and compare the contents to the data-mapped value.  The first item with a name or id matching the data-mapped value will be used.  Data-mapped parameters are not currently available for actions that have dynamic input fields or dynamic output fields.  When a template is installed and configured, any data-mapped parameters are not shown in the initial configuration dialog when the installed template is first turned on.
+18. Fixed an issue where new modules that support "xpath:" preceding their data paths would not receive the "xpath:" when used as submodules nested within other modules.  This would cause the nested module to perform incorrect processing.
 
-19. The Trigger Two-Way Sync module will no longer emit an item for processing if its id is in the database and if its created timestamp equals its last modified timestamp.
+19. Fixed an issue with the execution of assemblies in the assembly editor where Simple DB modules embedded in subassemblies would not use the correct "automation" scope when testing.
 
-20. The Quickbase "add row" and "update row" actions now add/update data values in a manner that no longer causes surrounding whitespace characters.
+20. The system's PDFBox libraries have been upgraded from v1.8 to the latest v2.0.16.  In the baseline system they are only used for the "text to PDF" action.
 
-21. Fixed an issue where automations would by default not send error alert emails to their owners.
+21. The Simple DB - DELETE and Simple DB - INSERT modules now log all their inputs, to aid troubleshooting.
 
-22. Automation alert emails sent to both the system admin and to the owners of automations now have a link at the bottom to suppress email alerts from the automation for errors starting with the same error message.
+22. Fixed the Recurly "update account" action.
 
-23. Automation alert emails sent to the system admin now have a link at the bottom to stop receiving all email alerts for the automation, plus a link to stop receiving all email alerts for all automations in the account (newly created automations in the account may still send error alerts, however).
+23. Trigger and action step notes are now displayed in the list of mappable data fields, to help identify automation steps when mapping data fields.
 
-24. The polling schedule and daily execution window for polling automations are now retained when polling automations are exported and imported, deployed, or created from templates.
+24. Actions for "system apps", like the Transforms, no longer count as processed tasks.
 
-25. Accounts having the "Assembly Developer" or "Switch Account" permissions will see a new automation gear menu option under the "Processing" menu for two-way sync automations named "Two-way sync mappings" that opens a new screen for managing two-way sync mappings in the database.  Mappings can be searched, modified, and deleted.
+25. The Transform Text app now has "convert JSON to XML" and "convert XML to JSON" actions.
 
-26. The default automation email alert delivery frequency is now daily instead of immediately.  The setting can be changed for each account from the automation editor's Settings menu under the account at the top right.
+26. The "URL" app now has a "send a POST payload" action.
 
-27. The Salesforce "Two-way sync add or update object record" action now supports matching logic.
+27. Double-clicking a module or subassembly in the assembly editor now always causes the assembly to be executed to that point, rather than it not executing unless the module was dirty.
 
-28. When wires are joined to modules in the assembly editor, if the assembly execution engine needs to be run a progress dialog now appears instead of just a message in green at the top of the screen.
+28. The Admin Console's "System Settings" screen has a new option to disable all system exports.
 
-29. The system no longer stores processed data rows in the database due to causing large database storage and slow search performance.  Now, the system stores processed data rows (if the system and automation are configured to store processed data) on the filesystem using the Lucene library.  This change is expected to greatly reduce database storage and improve automation history search performance.  Existing data rows currently in the database will eventually be pruned based on the system's configured setting for automation history log age.
+29. The Admin Console's "Native Work Queue" screen now shows the number of active webhook receiver threads and the peak number of webhook receiver threads.
 
-30. The baseline docker compose file now persists the appLucene directory.
+30. The "Subassembly Output (Dropdown Parameter)" module has been renamed to "Subassembly Output (Populated Parameter)".
 
-31. The Subassembly Output (Sync Action) module now only emits the selected data stream rather than all input data streams, so that the Action Two-Way Sync module works as expected without reporting a runtime error that expected information cannot be found.
+31. Added a new System app action "read query parameter value", which reads a query parameter passed to the automation via the System app's "execute automation" action.
 
-32. Fixed the Trigger Two-Way Sync module so it won't hang the automation's execution when processing the first sync.
+32. Added a new "Multi-Select Parameter (Populated)" module that can be used to configure triggers and actions.  The module presents a scrollable list of items where one or more items can be selected.  The list is populated from a subassembly, like is done with populated dropdown parameters.  The list can be optionally searchable.
 
-33. The Trigger Two-Way Sync module has been deprecated and replaced with a new version that supports enhanced two-way sync logic where items updated in one system are linked to a record in the other system on-the-fly by using matching logic in the create actions.  The new module no longer uses created timestamps or has the option to determine when items are created based on equal timestamps or the item not being in the database.
-
-34. Accounts having the "Assembly Developer" or "Switch Account" permissions will see a new automation gear menu option under the "Processing" menu for polling automations named "Manage stored data" that opens a new screen for managing polling data in the database.  This will primarily consist of data row unique ids for successfully processed data rows, but may also include other data stored by the automation.  Entries can be searched, modified, and deleted.
-
-35. The Recurly integration now uses their latest API version.
-
-36. The OAuth URL's for GoToAssist, GoToMeeting, GoToTraining, and GoToWebinar have been updated.
-
-37. Two memory leaks have been fixed in the 3rd-party UI library the system uses.  One leak caused any data fetched via HTTP to never be released.  The other leak caused all UI screen elements to never be released, even after being deleted.  The memory leaks would cause the UI to become slow and unresponsive or for the browser tabs to eventually run out of memory and crash.
-
-38. Fixed many additional memory leaks both in system UI code and in the 3rd-party UI library the system uses that were causing memory to not be freed in the Assembly Editor when diagrams were closed.
+33. The Switch Account dialog can now search for an account by entering an automation number.
