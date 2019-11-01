@@ -1,65 +1,63 @@
-1. The Conditional Execution [Data Stream] v2, Data Rows - Filter v2, Data Rows - Conditional Loop v2, and Fatal Error [Data Stream] v2 modules all now support scalar values in the left-side logic tests.
+1. Made a fix to the Switch Account dialog so it works reliably on tablet devices, such that entering search information will update the list.
 
-2. Automation field mappings are now initially collapsed.  Each trigger and action can now be individually expanded and collapsed to help make finding fields easier.
+2. In the automation editor, up/down arrows to reposition triggers, actions, and conditionals are now always visible on tablet devices.
 
-3. Fixed the automation field mappings search functionality so field names having spaces can now be searched.
+3. The automation editor is now scrollable on tablet devices.
 
-4. Webhook automations no longer process queued webhooks if the automation is turned off.  The queued webhooks will be processed when the automation is turned back on, according to the system's schedule for retrying unprocessed webhooks.
+4. If a nested subassembly in the Action Two-Way Sync module returns an error, the module now checks the system's configured list of retryable error messages and will flag the record to not be retried if the error message is not in the list.
 
-5. When a webhook automation is reset (via the gear icon menu option in the dashboard) any unprocessed webhooks in the work queue are now purged.
+5. The server now truncates error messages to be logged to stderr/stdout to 10 KB.
 
-6. The automation editor and assembly editor are now fully supported on tablet devices.  Testing has been done on a 12.9 inch iPad Pro.  Notable changes in the assembly editor to support the touch interface include the following:  To access the right-click context menu of catalog items, double tap them.  To access the right-click context menu of the main canvas, use the "Options" link at the bottom right above the Zoom slider.  To select multiple modules for copy/delete, instead of dragging a selection region click the "Select" link at the bottom right above the Zoom slider.  Then tap the modules to be selected.  Tap selected modules to unselect.  Tap the background to unselect all.  Click the "Stop Selection" link at the bottom right to exit the selection mode, or click the "Options" link at the bottom right which also exits selection mode.  The functionality of module right-click context menus is now mirrored in the module settings popover that appears when modules are tapped.  When wires are dragged, the end of the wire is placed above the fingertip, but to connect the wire move your fingertip over a destination wire node.  This is done so you can see the dragged wire node turn green when a valid destination can be connected.  The vertical and horizontal splitter controls are much wider so they can be easily tapped or dragged.  Controls that are normally hidden until moused over are instead always visible.  3rd-party editor libraries used for editing code and for field mappings in the automation editor have been updated to their latest versions so that momentum scrolling is available.
+6. If an automation processed an extremely large amount of data and encountered an error, the system would not be able to write the retry information into the database due to it exceeding the MySQL max packet size, leading to a logged error message and the ommission of the error from the automation's history.  Now if the system cannot write the data to the database it will instead omit the retry information so that the database entry can be saved into the automation history to record the error (although the failed transaction can't be retried).
 
-7. Fixed an issue with the automation editor where actions having validated parameters could not be saved due to a runtime error.
+7. When pasting a query into the Switch Account dialog immediately after opening it, the search results for the pasted query are now returned instead of all accounts.
 
-8. In the assembly editor, when wire connectors are joined/unjoined the diagram now automatically scrolls if needed to keep them in view.
+8. Extensive internal changes have been made to the system's source code so that the code's nomenclature matches the system's, e.g. "part" -> "module", "task" -> "automation".  Although the changes have been tested to the best of our ability, system behaviors could have been inadvertently affected.
 
-9. Canvas dialog windows are now resized to remain in view if the browser window is resized.
+9. Fixed an issue with connecting OAuth v2.0a apps in tenant systems when the OAuth v2.0 Workflow module's "append state param" option was unchecked.
 
-10. When templates having webhook triggers are installed, the system now requires that the automation be edited and the trigger configured.  Previously this was only needed if the webhook trigger had the "requires test transaction" checkbox in the Webhook module checked, but this did not account for triggers that register the webhook URL via API calls.
+10. The system's webhooks log is now stored in the appLogs/system directory rather than in appServerOutput.
 
-11. Added "Delete file", "Delete folder", and "Rename file" actions for the FTP app.
+11. The system's sent email log (internal only, stored in the tomcat log directory) and received webhook log (accessible via the developer menu in the assembly editor) are now rolled over when they reach 10MB in size, with up to 100 log files retained.
 
-12. The Quickbooks Online baseline integration has been migrated to use OAuth v2.0 instead of v1.0a.  The integration was not deprecated and replaced with a copy b/c of the large number of existing automations, plus the fact that the existing integrations will stop working anyway when Intuit turns off support for OAuth v1.0a in December.  All existing Quickbooks Online automations will need to have their connected accounts reconnected in order to work.  Systems using Quickbooks Online need to obtain OAuth v2.0 API keys and load them into the system's keychain via the Admin Console.
+12. The system's webhook log is no longer erased when the system boots.
 
-13. Fixed an issue with the Data Rows - Sort module where the server-side Java implementation would throw a "Comparison method violates its general contract" runtime error if all the selected XML nodes did not have the same schema where some of the sort criteria nodes were not present.
+13. Protocol logs are now stored in appLogs/system/protocol_threads and appLogs/system/unary_protocol_threads rather than in appServerOutput/tmp
 
-14. In the Switch Account dialog, user accounts can now be looked up by UUID.
+14. Protocol logs are now rolled over when they reach 10MB in size, with up to 100 log files retained.
 
-15. The automation execution engine now records the evaluation of trigger filters into the debug log, to help troubleshooting trigger filter logic.
+15. The Docker APIANT_LOG_LONG_TRANSACTION_TIME_SECONDS environment variable setting has been removed from the baseline docker-compose.yml file.
 
-16. Connections in the automation editor's connections screen are now searchable by app name.
+16. The appRPC.m_singleton.readFully() method accessible in inline Java JSP code has been renamed to appRPC.readStreamFully().  The system upgrade migration script updates references in existing inline Java JSP code.
 
-17. The HipChat integration has been deprecated b/c the app is being shut down.
+17. The appRPC.m_singleton.downloadFileToLocalFile() method accessible in inline Java JSP code has been renamed to appRPC.downloadFileFromURLToLocalFile().  The system upgrade migration script updates references in existing inline Java JSP code.
 
-18. Fixed an issue where new modules that support "xpath:" preceding their data paths would not receive the "xpath:" when used as submodules nested within other modules.  This would cause the nested module to perform incorrect processing.
+18. The appRPC.m_singleton.downloadFile() method accessible in inline Java JSP code has been renamed to appRPC.downloadFileFromURLToByteArray().  The system upgrade migration script updates references in existing inline Java JSP code.
 
-19. Fixed an issue with the execution of assemblies in the assembly editor where Simple DB modules embedded in subassemblies would not use the correct "automation" scope when testing.
+19. The appRPC.m_singleton.getHTTPClient() method accessible in inline Java JSP code has been renamed to appRPC.getHTTPClient().  The system upgrade migration script updates references in existing inline Java JSP code.
 
-20. The system's PDFBox libraries have been upgraded from v1.8 to the latest v2.0.16.  In the baseline system they are only used for the "text to PDF" action.
+20. The appRPC.getHTTPClient() method now take an HTTPMethod (such as GetMethod, PostMethod, etc.) as its input, rather than a string host name.  The system upgrade migration script updates references in existing inline Java JSP code.
 
-21. The Simple DB - DELETE and Simple DB - INSERT modules now log all their inputs, to aid troubleshooting.
+21. Fixed an issue with the automation execution engine where actions that followed a conditional would not be executed if the conditional branches contained other nested conditionals.
 
-22. Fixed the Recurly "update account" action.
+22. Conditional branches in the automation editor are now rendered with the false branches going to the left instead of down.  Triggers are now rendered at the top above the actions going from left to right, rather than on the left side of the actions going from top to bottom.  Conditionals now displays lines with arrows at the end of true and false branches that help to make the logic flow easier to understand.  Conditional true and false branches are now labeled "yes" and "no".
 
-23. Trigger and action step notes are now displayed in the list of mappable data fields, to help identify automation steps when mapping data fields.
+23. On tablet devices, the automation editor no longer keeps the item up/down movement arrows always visible.  Instead, selecting a trigger/action now presents a new "move this item" menu option.  Selecting this menu option then makes the movement arrows visible.
 
-24. Actions for "system apps", like the Transforms, no longer count as processed tasks.
+24. Text within action field mappings can once again be selected by clicking and dragging.
 
-25. The Transform Text app now has "convert JSON to XML" and "convert XML to JSON" actions.
+25. When adding triggers or actions to an automation in the automation editor, the newly added trigger/action will scan the automation's definition looking for a trigger or action for the same app.  If the first found trigger or action uses a different connected account than "default", that account is now automatically selected for the newly added trigger/action.
 
-26. The "URL" app now has a "send a POST payload" action.
+26. The SQL Server "any new row" trigger has been fixed so an error doesn't occur when selecting the sort column while configuring the trigger.
 
-27. Double-clicking a module or subassembly in the assembly editor now always causes the assembly to be executed to that point, rather than it not executing unless the module was dirty.
+27. The automation editor UI has been refreshed.
 
-28. The Admin Console's "System Settings" screen has a new option to disable all system exports.
+28. Triggers and subassemblies for Intercom have been updated so they work again due to a change in behavior with their API.
 
-29. The Admin Console's "Native Work Queue" screen now shows the number of active webhook receiver threads and the peak number of webhook receiver threads.
+29. Actions and conditions within the automation editor have a new menu option to disable/enable them.  When disabled, the automation execution engine will skip them and log an entry about it.
 
-30. The "Subassembly Output (Dropdown Parameter)" module has been renamed to "Subassembly Output (Populated Parameter)".
+30. In the automation editor's "manage stored data" and "two-way sync mappings" screens, the page size can now be set to 10, 25, 50, or 100 rows via a dropdown pick list.
 
-31. Added a new System app action "read query parameter value", which reads a query parameter passed to the automation via the System app's "execute automation" action.
+31. In the automation editor's "manage stored data" and "two-way sync mappings" screens, search queries now return matches that contain any portion of the entered search text, rather than only exact matches.
 
-32. Added a new "Multi-Select Parameter (Populated)" module that can be used to configure triggers and actions.  The module presents a scrollable list of items where one or more items can be selected.  The list is populated from a subassembly, like is done with populated dropdown parameters.  The list can be optionally searchable.
-
-33. The Switch Account dialog can now search for an account by entering an automation number.
+32. Added a "find row" action for MySQL and SQL Server apps.

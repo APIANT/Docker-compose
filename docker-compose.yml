@@ -202,9 +202,6 @@ services:
           # The number of seconds to wait for a socket response before timing out, zero for infinite
           - APIANT_SOCKET_TIMEOUT_SECONDS=3600
           
-          # The amount of time in seconds to wait before logging a long transaction to {TOMCAT_HOME}/logs/LongTransactions.log
-          - APIANT_LOG_LONG_TRANSACTION_TIME_SECONDS=30
-          
           # If true, new accounts can be created
           # Ignored if SSO (Single Sign-On) is enabled
           - APIANT_NEW_ACCOUNT_CREATION_IS_NEW_ACCOUNT_CREATION_ALLOWED=true
