@@ -374,6 +374,8 @@ services:
     expose:
         - 8080
     volumes:
+      - /home/data/apiant/appActiveMQ:/usr/local/tomcat/webapps/apiant/appActiveMQ
+      - /home/data/apiant/appHazelcast:/usr/local/tomcat/webapps/apiant/appHazelcast
       - /home/data/apiant/appLogs:/usr/local/tomcat/webapps/apiant/appLogs
       - /home/data/apiant/appModules:/usr/local/tomcat/webapps/apiant/appLucene
       - /home/data/apiant/appModules:/usr/local/tomcat/webapps/apiant/appModules

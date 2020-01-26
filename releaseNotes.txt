@@ -1,63 +1,45 @@
-1. Made a fix to the Switch Account dialog so it works reliably on tablet devices, such that entering search information will update the list.
+1. Fixed an issue in the automation editor where edited triggers and actions were not showing the dropdown list of all connected accounts.
 
-2. In the automation editor, up/down arrows to reposition triggers, actions, and conditionals are now always visible on tablet devices.
+2. Fixed scrollbar scrolling in browsers running on Windows.
 
-3. The automation editor is now scrollable on tablet devices.
+3. The system uses a second ActiveMQ queue for processing inbound webhooks, in order to avoid a flood of webhooks from possibly exhausting memory.
 
-4. If a nested subassembly in the Action Two-Way Sync module returns an error, the module now checks the system's configured list of retryable error messages and will flag the record to not be retried if the error message is not in the list.
+4. The automation history 2nd-level screen now shows filtered data rows, for data rows filtered after the system is upgraded with this release.
 
-5. The server now truncates error messages to be logged to stderr/stdout to 10 KB.
+5. The writing of automation history into Lucene has been optimized by caching the data and writing it into Lucene as a single batch.  This greatly reduces the load on Hazelcast, so the Admin Console's Hazelcast Stats page has now been removed.
 
-6. If an automation processed an extremely large amount of data and encountered an error, the system would not be able to write the retry information into the database due to it exceeding the MySQL max packet size, leading to a logged error message and the ommission of the error from the automation's history.  Now if the system cannot write the data to the database it will instead omit the retry information so that the database entry can be saved into the automation history to record the error (although the failed transaction can't be retried).
+6. When the top-level automation history filter is set to a value other than "All", clicking on a history card now causes the second-level filter to always reset to "All" instead of using the filter value from the top-level.  This is because people were confused by apparently "missing" data, especially when failed transactions were later successfully retried.
 
-7. When pasting a query into the Switch Account dialog immediately after opening it, the search results for the pasted query are now returned instead of all accounts.
+7. The Admin Console's Native Work Queue screen has been renamed to Work Queue.  (Earlier there was a thought that an external 3rd-party task executor may be used in the system.  That is no longer being considered.)
 
-8. Extensive internal changes have been made to the system's source code so that the code's nomenclature matches the system's, e.g. "part" -> "module", "task" -> "automation".  Although the changes have been tested to the best of our ability, system behaviors could have been inadvertently affected.
+8. The Admin Console's left-side navigation menu has been re-ordered so the most frequently used screens are listed first.
 
-9. Fixed an issue with connecting OAuth v2.0a apps in tenant systems when the OAuth v2.0 Workflow module's "append state param" option was unchecked.
+9. The Admin Console's Work Queue screen's "Lock/Unlock Work Queue" button now always reflects the current state of the queue.  Also, a "Queue Locked" banner now appears when the queue is locked.
 
-10. The system's webhooks log is now stored in the appLogs/system directory rather than in appServerOutput.
+10. The Admin Console's Work Queue screen's now remain vertically centered.
 
-11. The system's sent email log (internal only, stored in the tomcat log directory) and received webhook log (accessible via the developer menu in the assembly editor) are now rolled over when they reach 10MB in size, with up to 100 log files retained.
+11. The Admin Console has a new screen that shows unprocessed webhooks.  These are webhook payloads that have been received by the system but not yet processed by automations.
 
-12. The system's webhook log is no longer erased when the system boots.
+12. The top-level automation history screen cards now show messages and a spinning logo when automations are either queued for processing or when processing.  The cards can also not be clicked when in these states, to avoid drilling down into an empty screen.
 
-13. Protocol logs are now stored in appLogs/system/protocol_threads and appLogs/system/unary_protocol_threads rather than in appServerOutput/tmp
+13. When halting an automation's execution from the automation history screens, the UI now prompts to confirm the action, mainly since the button is now close to other controls.
 
-14. Protocol logs are now rolled over when they reach 10MB in size, with up to 100 log files retained.
+14. When halting an automation's execution from the automation history screens, the transaction is now flagged with a "Processing interrupted" error, in order that the transaction can later be retried via the Retry button.
 
-15. The Docker APIANT_LOG_LONG_TRANSACTION_TIME_SECONDS environment variable setting has been removed from the baseline docker-compose.yml file.
+15. The 2nd-level automation history screen is now paginated via infinite scrolling rather than loading all available data rows at once, for performance.
 
-16. The appRPC.m_singleton.readFully() method accessible in inline Java JSP code has been renamed to appRPC.readStreamFully().  The system upgrade migration script updates references in existing inline Java JSP code.
+16. The Admin Console's Work Queue screen now has a button to toggle the view between work items being processed and work items queued in memory waiting to be processed.
 
-17. The appRPC.m_singleton.downloadFileToLocalFile() method accessible in inline Java JSP code has been renamed to appRPC.downloadFileFromURLToLocalFile().  The system upgrade migration script updates references in existing inline Java JSP code.
+17. In the automation editor, trigger filters now have a checkbox that can turn off the logging of filtered data rows into automation history.  This is mainly for triggers that filter out lots of data rows, which can fill up automation history and degrade its performance and usability.
 
-18. The appRPC.m_singleton.downloadFile() method accessible in inline Java JSP code has been renamed to appRPC.downloadFileFromURLToByteArray().  The system upgrade migration script updates references in existing inline Java JSP code.
+18. The performance of loading automation history has been greatly improved for large amounts of stored history data.
 
-19. The appRPC.m_singleton.getHTTPClient() method accessible in inline Java JSP code has been renamed to appRPC.getHTTPClient().  The system upgrade migration script updates references in existing inline Java JSP code.
+19. The system now supports automations that contain both polling triggers and webhook (instant) triggers.
 
-20. The appRPC.getHTTPClient() method now take an HTTPMethod (such as GetMethod, PostMethod, etc.) as its input, rather than a string host name.  The system upgrade migration script updates references in existing inline Java JSP code.
+20. Fixed an issue where compiling dynamic module libraries in the Admin Console's Compilation screen would not update their saved timestamps, causing the same libraries to be recompiled over and over each time dynamic modules were recompiled.
 
-21. Fixed an issue with the automation execution engine where actions that followed a conditional would not be executed if the conditional branches contained other nested conditionals.
+21. ActiveMQ is now configured in a manner that allows all incoming webhooks an equal chance to be processed.  Previously, if one automation was receiving a flood of webhooks that would cause ActiveMQ to not allow other automations a chance to process their incoming webhooks.
 
-22. Conditional branches in the automation editor are now rendered with the false branches going to the left instead of down.  Triggers are now rendered at the top above the actions going from left to right, rather than on the left side of the actions going from top to bottom.  Conditionals now displays lines with arrows at the end of true and false branches that help to make the logic flow easier to understand.  Conditional true and false branches are now labeled "yes" and "no".
+22. The system now emits a task_prune.log in the Tomcat logs directory that contains entries related to the pruning of the system's database and log files.
 
-23. On tablet devices, the automation editor no longer keeps the item up/down movement arrows always visible.  Instead, selecting a trigger/action now presents a new "move this item" menu option.  Selecting this menu option then makes the movement arrows visible.
-
-24. Text within action field mappings can once again be selected by clicking and dragging.
-
-25. When adding triggers or actions to an automation in the automation editor, the newly added trigger/action will scan the automation's definition looking for a trigger or action for the same app.  If the first found trigger or action uses a different connected account than "default", that account is now automatically selected for the newly added trigger/action.
-
-26. The SQL Server "any new row" trigger has been fixed so an error doesn't occur when selecting the sort column while configuring the trigger.
-
-27. The automation editor UI has been refreshed.
-
-28. Triggers and subassemblies for Intercom have been updated so they work again due to a change in behavior with their API.
-
-29. Actions and conditions within the automation editor have a new menu option to disable/enable them.  When disabled, the automation execution engine will skip them and log an entry about it.
-
-30. In the automation editor's "manage stored data" and "two-way sync mappings" screens, the page size can now be set to 10, 25, 50, or 100 rows via a dropdown pick list.
-
-31. In the automation editor's "manage stored data" and "two-way sync mappings" screens, search queries now return matches that contain any portion of the entered search text, rather than only exact matches.
-
-32. Added a "find row" action for MySQL and SQL Server apps.
+23. Automation and batch job logs are now stored in directories named after the automation id or batchjob id, rather than their uuids.
