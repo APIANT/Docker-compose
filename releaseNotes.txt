@@ -1,45 +1,29 @@
-1. Fixed an issue in the automation editor where edited triggers and actions were not showing the dropdown list of all connected accounts.
+1. The pruning of logs stored in S3 is now done in batches of up to 1,000 items, rather than one-by-one.
 
-2. Fixed scrollbar scrolling in browsers running on Windows.
+2. Inline JSP within assemblies no longer uses the "appRPC" bean.  Instead, a bean defined as "appJSP" is used instead that references a different class on the server.  The system upgrade migrates existing inline JSP code.  Javadocs accessible from the Developer menu in the Assembly Editor have been updated accordingly.
 
-3. The system uses a second ActiveMQ queue for processing inbound webhooks, in order to avoid a flood of webhooks from possibly exhausting memory.
+3. Big structural changes have been made to the system's server-side code.  System functionality is intended to remain the same, but the changes may cause inline JSP within assemblies to not compile even though the system upgrade attempts to migrate all changed references.  Contact support@apiant.com if automations that previously worked now show Java stackdumps in their logs and we will help fix.
 
-4. The automation history 2nd-level screen now shows filtered data rows, for data rows filtered after the system is upgraded with this release.
+4. Due to performance issues with ActiveMQ, a queue per webhook automation is now used instead of a single queue.
 
-5. The writing of automation history into Lucene has been optimized by caching the data and writing it into Lucene as a single batch.  This greatly reduces the load on Hazelcast, so the Admin Console's Hazelcast Stats page has now been removed.
+5. The Admin Console's Work Queue screen has a new button that cleanly drains the queue, such that automations currently executing will complete their processing of all data rows.  This is unlike the lock work queue functionality, which causes executing automations to halt processing after the current data row, even if more data rows remain to be processed.
 
-6. When the top-level automation history filter is set to a value other than "All", clicking on a history card now causes the second-level filter to always reset to "All" instead of using the filter value from the top-level.  This is because people were confused by apparently "missing" data, especially when failed transactions were later successfully retried.
+6. The automation editor dashboard's gear menu "View lucene dump" has been removed b/c some automations produce many GB of data in Lucene.  Instead, accounts having the Assembly Developer or Switch Account permission will see an "eye" icon in the top-level automation history tiles that can be clicked to view all data stored in Lucene for just that execution of the automation.
 
-7. The Admin Console's Native Work Queue screen has been renamed to Work Queue.  (Earlier there was a thought that an external 3rd-party task executor may be used in the system.  That is no longer being considered.)
+7. Fixed the automation editor's history view so that successfully retried transactions will not show the Retry button.
 
-8. The Admin Console's left-side navigation menu has been re-ordered so the most frequently used screens are listed first.
+8. When drilling down into the lowest-level automation history in the automation editor, actions now display the radio buttons for halting/continuing on errors.
 
-9. The Admin Console's Work Queue screen's "Lock/Unlock Work Queue" button now always reflects the current state of the queue.  Also, a "Queue Locked" banner now appears when the queue is locked.
+9. Fixed an issue that would cause webhook automations to have dangling top-level history tiles that showed "executing" and the spinning logo.  The fix only prevents new dangling entries from occurring, it doesn't remove existing ones.
 
-10. The Admin Console's Work Queue screen's now remain vertically centered.
+10. The automation editor's lowest-level automation history view now indicates which paths conditionals take by coloring the true/false branch green/red respectively.
 
-11. The Admin Console has a new screen that shows unprocessed webhooks.  These are webhook payloads that have been received by the system but not yet processed by automations.
+11. The system now uses the latest available version of Hazelcast.
 
-12. The top-level automation history screen cards now show messages and a spinning logo when automations are either queued for processing or when processing.  The cards can also not be clicked when in these states, to avoid drilling down into an empty screen.
+12. Automations that are timed out no longer remain in an executing state for up to 15 minutes.
 
-13. When halting an automation's execution from the automation history screens, the UI now prompts to confirm the action, mainly since the button is now close to other controls.
+13. When automations are timed out, the lowest-level automation history screen now shows the timed-out step in red and the item's log is now available.
 
-14. When halting an automation's execution from the automation history screens, the transaction is now flagged with a "Processing interrupted" error, in order that the transaction can later be retried via the Retry button.
+14. Trigger filters and conditionals in the automation editor now have a "is valid email" condition that succeeds when the email has a valid syntax.
 
-15. The 2nd-level automation history screen is now paginated via infinite scrolling rather than loading all available data rows at once, for performance.
-
-16. The Admin Console's Work Queue screen now has a button to toggle the view between work items being processed and work items queued in memory waiting to be processed.
-
-17. In the automation editor, trigger filters now have a checkbox that can turn off the logging of filtered data rows into automation history.  This is mainly for triggers that filter out lots of data rows, which can fill up automation history and degrade its performance and usability.
-
-18. The performance of loading automation history has been greatly improved for large amounts of stored history data.
-
-19. The system now supports automations that contain both polling triggers and webhook (instant) triggers.
-
-20. Fixed an issue where compiling dynamic module libraries in the Admin Console's Compilation screen would not update their saved timestamps, causing the same libraries to be recompiled over and over each time dynamic modules were recompiled.
-
-21. ActiveMQ is now configured in a manner that allows all incoming webhooks an equal chance to be processed.  Previously, if one automation was receiving a flood of webhooks that would cause ActiveMQ to not allow other automations a chance to process their incoming webhooks.
-
-22. The system now emits a task_prune.log in the Tomcat logs directory that contains entries related to the pruning of the system's database and log files.
-
-23. Automation and batch job logs are now stored in directories named after the automation id or batchjob id, rather than their uuids.
+15. The Admin Console Work Queue screen's "halt work queue" button has been repositioned to be the 3rd listed b/c it should not typically be used.  It also now presents a validation dialog when stopping the work queue, informing that all executing automations will be immediately halted.
