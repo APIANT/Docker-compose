@@ -283,6 +283,14 @@ services:
           # If true, Twitter OAuth API keys must be loaded into the system
           - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_HAS_TWITTER=false
           
+          # The system can send the results of API invocations to a Splunk HTTP Event Collector for dashboarding and alerting
+          # The URL of the HTTP Event Collector to invoke
+          # General form = http(s)://domain:port/services/collector
+          - APIANT_SPLUNK_URL=
+
+          # The HTTP Event Collector token to use
+          - APIANT_SPLUNK_TOKEN=
+
           # The system supports Single Sign-On (SSO) using either a Central Authentication Service (CAS) or SAML
           # Only one can be enabled
           - APIANT_SSO_CAS_IS_ENABLED=false

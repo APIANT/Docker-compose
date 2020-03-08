@@ -1,33 +1,17 @@
-1. Error messages written into automation history are now truncated to 512 characters, to avoid filesystem growth from excessively long error messages returned from some API's.  The full error messages can still be viewed from the debug logs.
+1. Greatly improved the performance of the Transform Date Time "modify and reformat date time" action.  Previously it could take 2 to 3 seconds to complete, now it takes less than 10 millis.
 
-2. In the automation editor's automation history view, the second-level view is no longer empty if the trigger is configured to not record filtered records and many filtered records are recorded.
+2. Alert email body text is now limited to 4096 characters in length.
 
-3. Modules have a "v1" and "v2" version have now had their "v1" versions deprecated and "v2" removed from the newer version's name.  Deprecated modules continue to work as-is and will not be removed from the system.  New module versions are only introduced when backwards compatibility for fixes or enhancements cannot be assured.
+3. The system can now be configured to send API invocation metrics to a Splunk HTTP Event Collector for dashboarding, reporting, and alerting.
 
-4. The assembly editor no longer displays a warning dialog when saving assemblies that contain deprecated modules.
+4. The Asana integration has been updated due to their API being changed to rename the "id" field to "gid".
 
-5. Deprecated modules in assembly editor diagrams are no longer highlighted in yellow.  Due to the change of deprecating "v1" modules, now a large number of existing assemblies contain deprecated modules.  But the integrations will continue to work as-is and there is no real need to replace deprecated modules in working integrations.  Deprecated modules are not "broken", they are just superceded by newer versions with improved functionality or changes that could not be made backwards compatible with existing integrations.
+5. Fixed the "retry" button in the dialog that appears after choosing to "retry all" errors from automation history, such that retry processing now occurs.
 
-6. Fixed an issue when viewing the lowest-level automation history where mapped fields in conditionals would show "null" for their names and no step numbers.
+6. Fixed a regression where System.out.println() within Extension - Server-Side Script modules was not being written to automation logs.
 
-7. In the automation editor's lowest-level automation history view, when steps are moused over a preview now appears showing the inputs and outputs of the step.  This makes it easy to analyze processing of a data row without lots of clicking and reading debug logs.
+7. The system now auto-retries actions that return a 429 rate limit exceeded HTTP status code.  Retries happen up to three times, after 5, then 10, then 15 minutes.
 
-8. Lists of user accounts, such as in the Admin Console's User Accounts page, the Switch Account dialog, and the Deploy dialog are now infinitely scrollable, rather than having to click the last item in the list to load the next page of accounts.
+8. A new appJSP.logHttpResults() method for inlined Java JSP code within assemblies is now available.  The method logs the results of API calls made with HttpClient.  When run in the Assembly Editor the logged entries go to the developer's trace log.  When run in an automation the logged entries go into the automation log.  If the system is configured to use Splunk then API metrics are also sent to Splunk.
 
-9. If the last action to be executed in an automation has the "continue if error" option selected and the action returns an error, the error is now logged and reported so that an entry appears in the automation history.  As it previously was, the data row would not appear in automation history and give the impression it was not processed, with no way to access its execution logs.
-
-10. The Wunderlist integration has been deleted b/c the app is shutting down May 6, 2020.
-
-11. The Automation Editor now autosaves changes every 30 seconds while editing automations.  If the editing session is interrupted, the editor will ask if the autosaved version should be restored the next time the automation is edited.  This also occurs when editing new automations.  Note: autosaves do not occur while editing trigger/conditional/action settings.
-
-12. Automations that only have webhook triggers have a new dashboard gear menu option under "Processing" named "Concurrency limit", visible only to accounts having the Assembly Developer or Switch Account permission.  Clicking the menu option opens a dialog where the webhook automation's concurrency limit can be set.  The concurrency limit defines how many data rows can be processed in parallel at the same time.  See the dialog's help text to learn more about this setting.
-
-13. A performance optimization has been made to modules that store record identifiers in the database.  The affected modules include all variations of "Emit New Items", plus the "Trigger Two-Way Sync" module.  This change will improve the execution time of polling automations, especially ones that use MD5 hashes to detect record changes.
-
-14. Fixed an issue where UI entry fields that were configured to not allow certain characters for input were not filtering those characters when the input was pasted into the entry field instead of being typed.
-
-15. Hazelcast configuration settings are modified based on feedback from Hazelcast developers in an attempt to resolve an infrequent crash.
-
-16. Gmail triggers now support attachments with filenames having ampersands in them.
-
-17. The Admin Console's "Unprocessed Webhooks" screen has a new button visible only to the super admin for controlling whether or not the system accepts inbound webhooks and places them into a queue for processing.  This is to be used for system maintenance when there is a need to not accept inbound webhooks.
+9. A new log_curl_results() function for inlined PHP code within assemblies is now available.  The method logs the results of API calls made with curl.  When run in the Assembly Editor the logged entries go to the developer's trace log.  When run in an automation the logged entries go into the automation log.  If the system is configured to use Splunk then API metrics are also sent to Splunk.
