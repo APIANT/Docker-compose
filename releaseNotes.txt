@@ -1,13 +1,29 @@
-1. When viewing the lowest-level automation history screen that shows the automation builder in read-only mode, clicking the "create automation" link now displays an empty automation instead of showing the triggers and actions that were displayed in the automation history.
+1. Fixed the Extension - JavaScript module so that arguments surrounded by single quotes (e.g. 'ARG1') will be substituted correctly when their input values also contain single quote characters.
 
-2. A new appJSP.logSdkResults() method for inlined Java JSP code within assemblies is now available for logging the results of API calls made with app-specific SDK's like for Quickbooks Online. The method logs the results of SDK API calls made with HttpClient. When run in the Assembly Editor the logged entries go to the developer’s trace log. When run in an automation the logged entries go into the automation log. If the system is configured to use Splunk then API metrics are also sent to Splunk.
+2. Fixed a regression where Batch Job logs were not accessible.  The fix only makes newly written batch job logs accessible.
 
-3. After performing a search in the automation task history, the lowest level view no longer shows an "invalid version" error and correctly loads the selected automation instead of showing the previously viewed automation.
+3. The automation editor has a new Loop control that iterates through multiple field values emitted by actions.
 
-4. When placing the cursor in a scrolled text UI control, the control no longer automatically scrolls to the top, allowing the cursor to be positioned where clicked.
+4. In the automation history's second drilldown level, selecting the Success/Errors/Filtered execution status will now show all matching results.
 
-5. When an automation is executed via the System app's "execute automation" action and the action is configured to wait until the executed automation completes, the executed automation's details now appears in the Admin Console's Work Queue screen as it executes.
+5. Fixed the connector assemblies for GoToAssist, GoToMeeting, GoToTraining, and GoToWebinar due to changes in their OAuth logic.
 
-6. A "generate random value" action has been added to the Transform Data app.  It generates random values based on a supplied format mask.
+6. The list of folders in the automation editor dashboard can now be searched.
 
-7. Added a "find automation by name" action in the System app.  Can be used in conjunction with the "execute automation" action to lookup an automation to be executed.
+7. Fixed automation history for an edge case where the next-to-last executed action had an error but was configured to "continue if error" and the last executed step was a condition or loop with no action in the processed branch, such that the automation history now reports the status of the next-to-last action instead of always reporting a success but with an empty drilldown which didn't allow inspection of the executed data row.
+
+8. The automation history screen will no longer display instances of "Executing..." with the spinning icon if in fact the automation is not currently in the work queue and being processed.
+
+9. The automation history screen has a new "Info" filter dropdown option, for viewing only entries related to the automation being edited and turned on/off.
+
+10. The popover app catalog in the automation editor now lists apps vertically and is infinitely scrollable, rather than using left/right pagination arrows.
+
+11. The Chooser Dialog Window module now has a "Closeable" checkbox setting.  When checked, the displayed dialog window will have a close icon at its top right.  When clicked, the assembly execution is halted.
+
+12. The "continue if error" option for actions has been modified to be "continue if non-critical error" such that critical errors will now halt processing.  Critical errors are considered to be an API HTTP status code >= 400, with the exception of 404 (not found).  In the case of 404 errors, generally those occur for "find" actions and the automation developer will want to use a conditional branch to handle the logic for when the item is found or not.
+
+13. When copy-pasting actions in the automation editor, pasted actions now include all fields and all field mappings from the copied action.
+
+14. The max length of folder names in the automation editor has been increased from 50 to 100, to match the max length of automation names.
+
+15. When editing an action that has dynamically loaded fields, after making changes to the field mappings and then clicking the Refresh Fields button the unsaved field mapping edits are no longer lost and reverted back to the original mappings.
