@@ -1,37 +1,57 @@
-1. When editing the Transform Data's "evaluate JavaScript expression" action, the JavaScript field now has a pencil icon that opens up a full-screen code editor that features syntax highlighting and code tips.
+1. The lowest-level automation history view (the graphical view) now shows the execution number and date in the top header.  The execution number is also now searchable in the top-level automation history screen.
 
-2. The prior implementation of automation history has been removed from the system's code and corresponding database tables (which are now empty) have been dropped.
+2. The Update & Delete buttons in the automation editor's Manage Stored Data and Two-Way Sync Mappings screens no longer disappear when moused over.
 
-3. The XML Builder module has been fixed such when the "wrap all substituted VALs with CDATA" option is unchecked, all values containing both ampersands and either greater than or less than symbols are correctly escaped.
+3. In the automation editor's lowest-level automation history view (the graphical view), the Input/Output popover on actions no longer displays "CUSTOMER_ALERT" text in errors (which is text intended for alert emails).
 
-4. After using the Switch Account functionality in the Automation Editor, two new menu items appear under the top right account menu for adding and viewing notes related to the account.
+4. In all right-click context menus throughout the UI, if an option is clicked but then the mouse is moved off the clicked option, that option will no longer be performed.  The menu will now remain open so a different option can be selected.
 
-5. Accounts with the "Switch Account" permission or the "Assembly Developer" permission will see a new "Open this assembly" menu option when clicking on trigger and action icons in the automation editor.  The option opens a new browser tab to the trigger/action assembly in the assembly editor.
+5. The automation builder has a new right-click context menu option to show and hide the ability to search all mapped fields for a given value.  Actions/conditions/loops that contain the entered value in their field mappings will be highlighted, and a count of the total matches appears underneath the search entry field.  As mappings are edited the number of total matches is updated.
 
-6. In the Admin Console's "User Accounts" screen, when managing an account the account's password can now be reset to an entered value.
+6. Triggers and actions in the automation builder now have a right-click context menu with an option to highlight items that have mapping references to it.
 
-7. Automation loops no longer execute if the selected action emits no array elements.
+7. The following single-click popover options in the automation builder for triggers, actions, conditions, and loops have been moved to the new right-click context menu: rename, edit notes, enable/disable, open assembly.
 
-8. All modules having conditional logic configured for "length equals" and a criteria of "0" (zero) will now evaluate to true if the xpath for the value does not select a data node.  In other words, the absence of a value for "length equals zero" is now considered to be true.  This same change in behavior is also applied to the "does not contain" operation, when the criteria is a non-empty value.  The main motivation for this change is so that "does not exist" and "length equals zero" have the same meaning.  This revised behavior also matches the behavior of Trigger Filters for automations.
+8. Fixed an issue that would sometimes cause the Input/Output popover in the lower level graphical automation history view to not show any output data for triggers.
 
-9. Fixed a regression where submodule drop areas within nestable modules in the assembly editor were not being highlighted and displaying "supported" and "not supported" messages when items were being dragged from the catalog.
+9. Automation history searches now include action output data in the search logic, rather than just trigger data.
 
-10. Action and trigger settings in the automation editor now utilize more horizontal space, rather than being in a rather narrow column.
+10. Searches for user accounts in the admin console's User Accounts screen and in the Switch Account dialog now return matches based on any portion of the email address.
 
-11. Action and trigger settings in the automation editor now have a "show template annotations" checkbox at the lower left that appears for accounts having the "Automation Templates" permission and when the action/trigger has configuration settings.  Template annotation entry fields are now only visible when the checkbox is checked.
+11. In the admin console's User Accounts screen, the Reset Task Count, Assign Roles, and Reassign Content buttons have been removed and placed into the Manage Account dialog as hyperlink options.
 
-12. In the Admin Console's "System Settings" and "Subscription Plans" screens, the "Save" and "Activate Saved Changes" buttons have been combined into a single "Save and Activate" button.
+12. If the top-level automation history is searched for an alert id (provided in alert emails), after clicking the error tile the next drill-down level's search field is now cleared so the selected error will appear.
 
-13. In the automation editor's dashboard, the "manage stored data" menu option in the gear icon menu "processing" submenu is now always visible for accounts having necessary permissions.  The manage stored data screen now includes data stored at the account level, rather than just automation-level data.
+13. Error tiles in the 2nd-level drilldown of automation history now display a link icon that can be used to obtain a link to the error.
 
-14. The "manage data" and "two-way sync mappings" screens in the automation editor no longer time out after 30 seconds when loading data.
+14. If a user does a manual retry of a failed transaction and it succeeds, if the transaction is scheduled for auto-retry by the system the transaction will now be removed from the auto-retry scheduler.
 
-15. Automation history is now searchable by error messages and error codes.
+15. The system's auto-retry schedule for automation failures has been modified.  Previously the system would auto-retry failed transactions (those configured in the system to be retried) for up to 3 times after 5, then 10, then 15 minutes.  The system's new auto-retry schedule is up to 10 total attempts after 15 seconds, then 30 seconds, then 1 minute, then 2 minutes, then 5 minutes, then 10 minutes, then 30 minutes, then 1 hour, then 2 hours, then 4 hours.  The new schedule provides for faster initial retries, plus a total timespan of almost 8 hours to accommodate extended API outages.
 
-16. In the automation editor's dashboard gear icon menu, the "view database dump" option has been renamed to "dump automation data".  Also added a "dump account data" option that opens a new browser tab/window that displays account-level data stored in the database for automations.
+16. The content of alert emails now contains the automation's name.  Also, stack traces are now removed.
 
-17. The "Editing Deployed Automation" warning that appears when editing a deployed automation no longer appears when a person who used the "switch account" functionality is editing the automation.  The presumption is that this is a system admin or a support person who knows what they are doing.
+17. Searches for email addresses in automation history now seem to be working.
 
-18. The admin console's "unprocessed webhooks" screen has been renamed to just "webhooks" and it now shows the total number of webhooks the system has received since it was lasted booted.
+18. If an action is mapped to a Loop in the automation editor and that action is removed and its field mapping is removed, the editor now shows "No Action Mapped" for the loop rather than keeping an invalid field mapping to the removed action.
 
-19. In the automation editor, both the "Manage stored data" and "Two-way sync mappings" screens now utilize more of the available screen width and also use infinite scrolling to load data pages instead of left/right arrows.
+19. Conditionals and Loops in the automation editor can now be copy-pasted.
+
+20. The right-click menu on actions, conditionals, and loops in the automation editor has a menu option to select the item and all following items in the branch.  The items are then highlighted.  Then clicking on a plus icon destination will show a menu option to paste or move the selected items.  Right-clicking on the automation editor's background will show a menu option to delete the selected items.
+
+21. If an Action - Skip Data Row module or Action - Skip Subsequent Actions module is invoked, the lowest-level automation history now allows the skipped action to be inspected and its log viewed.  Previously the action would appear grayed-out and the log could not be opened.
+
+22. In the lowest-level graphical automation history view, conditionals within loops now display per-iteration results in their mouseover popovers.  Conditional logs also now delineate each loop iteration.
+
+23. The admin console has a new "Retries" screen that shows scheduled auto-retry transactions.  These were previously listed in the Work Queue screen.  The Work Queue screen now shows just the total number of currently scheduled retry transactions.
+
+24. When triggers report an error, the automation now displays the error highlight in the automation editor's dashboard and the automation's history also now displays the error (rather than showing an entry with zero errors/successes/filtered).
+
+25. The timezone pick list now contains all available timezones (over 600 locations), plus the displayed GMT offsets are now dynamically computed so they are accurate during daylight saving periods.
+
+26. In the lowest-level graphical automation history view, only triggers that emit data rows are now highlighted in green.  This change only occurs for newly processed transactions going forward.
+
+27. Webhook logs have been moved from the AppLogs/system subdirectory to AppLogs/system/webhooks.
+
+28. Sent email logs have been moved from the Tomcat /logs subdirectory to AppLogs/system/sent_emails.
+
+29. Task prune logs have been moved from the Tomcat /logs subdirectory to AppLogs/system/task_prune.
