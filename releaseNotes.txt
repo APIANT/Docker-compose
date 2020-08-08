@@ -1,73 +1,19 @@
-1. In the lowest-level automation history view (the graphical view), if a trigger did not emit any data rows it can now be clicked and its debug logs inspected, rather than a message saying "this step was not executed" appearing.
+1. Mapped action output fields in the automation builder and graphical automation history view now have an eye icon next to the step number that can be clicked to view the source action in the diagram.  The source action will be highlighted and scrolled into view.  Click the button at the top of the screen to return back to the field mappings dialog.
 
-2. In the automation editor, after using the "select this and all following" right-click menu option on an item, highlighted items now have a "deselect this and all following" right-click menu option.  Then the remaining highlighted items can be copied/moved/deleted.
+2. If an automation has a single trigger, the graphical automation history view now highlights it in green even if the trigger emits no data for processing, to indicate that it successfully did its processing.
 
-3. Actions, conditions, and loops in the automation editor can now be grouped, in order to reduce the visual complexity of large automation logic.  To group items together, start by right-clicking on an item and choose "select this and all following".  To select a range of items, then optionally right-click on a highlighted item and choose "deselect this and all following".  Then right-click on the editor's background and choose "group selected items".  Enter a name for the group.  The selected items will then be hidden and replaced with a small rectangular region with a dashed border that shows the group's name and a button to open the group.  Opening the group will cause the items to reappear, along with a button to close the group and a button to ungroup the items.  When automations are initially opened, all groups are collapsed.  Groups do not appear in the graphical automation history view.
+3. When non-webhook automations are saved, an erroneous "The automation has been reset..." message will no longer be written to the automation history when in fact the automation was not reset due to no modified trigger settings.
 
-4. Only accounts having the "switch account" or "assembly developer" permissions can now access the view connection details screen for connected accounts in the automation editor's connection screen.
+4. Automation history is now written into Lucene after every 50th processed data row, rather than only after all data rows have processed.  The expected benefits are to reduce memory usage for automations that process lots of data rows, plus to speed up the time in which automation history becomes available to access after automations complete processing.
 
-5. When an app account is disconnected, the system no longer purges configured webhooks for active automations that are being turned off by the system.  This would cause a "This automation cannot be turned on until its instant trigger is configured" message to occur when the account was later reconnected and the automations turned back on.  Instead, the system will rely on its background task that will clean up any dangling webhooks when the automation is eventually deleted.
+5. Existing Bitly endpoints have been deprecated b/c they are turning off their v3 API.  A new "create bitlink" action has been added that uses their v4 API.
 
-6. Popovers in the graphical automation history view are now wider so more data is visible.
+6. A change has been made to try to ensure that when an automation is timed out that an error entry about the timeout is written to the automation's history.
 
-7. Triggers in the automation editor now use a wrapping layout, so that lots of triggers won't be offscreen.
+7. Added a "Data Rows - Standardize Schema" module that makes all data rows have the same XML schema by adding nodes and attributes where needed.
 
-8. The rendering performance of automation editor diagrams has been improved by about 1/3.  The performance of moving single items up/down via their arrows has been doubled.
+8. The UI library's setting to detect double-clicks has been increased slightly from 200ms to 250ms, in order to help make it easier for double clicks to be recognized.
 
-9. After selecting items in the automation editor, the right-click menu on the editor's background has a new option to disable/enable the items.  The option depends on the state of the first selected item, which becomes toggled.
+9. In the automation editor, action field mappings can now be copied from one action into others.  Right click on an action and choose the "copy field mappings" context menu option to copy the action's field mappings.  Then right click on a destination action and choose the "paste field mappings" option to paste the field mappings.  Mappings will be pasted into fields based on field name matches.  Invalid mappings will not be pasted.  Once copied, the mappings can be pasted into other actions as needed, even in different automations.  The main usage for this functionality is to make is easier to replace a deprecated action with a newer version.
 
-10. In the lowest-level graphical automation history, if an action with an error (highlighted in red) is moused over the popover now displays an additional button to retry the error.
-
-11. Fixed an issue in the top-level automation history where searching on an action output value would return matches if "All" was selected, but not if "Success" or "Error" were selected.
-
-12. If an automation trigger emits a 401 error and the API endpoint is in the list of endpoints for ignoring 401's, the system no longer sends an email alert.
-
-13. In the lowest-level graphical automation history, failures can now be retried from any of the completed action steps above the error. This is for when a completed step actually completed erroneously, e.g. when the assembly is wrong and needs to be fixed. Or when data in the app is incorrect, is later fixed, and the successful action needs to re-fetch the fixed data in order to make the failed step succeed.  The popover that appears when mousing over completed actions highlighted in green has a new "Retry from here" button to run the automation again starting at that step.
-
-14. Added a new "Service Credentials - Get all names" module that returns a data stream containing all connected account names.  The intended purpose is for iteration to fetch data from multiple connected accounts for an app.
-
-15. Fixed the key-value UI control so lines cannot be dragged past the small help text at the top of the control.
-
-16. In the automation builder, if an automation has at least one action and all triggers are removed, the editor now continues to display the "ACTIONS" header and first line.
-
-17. The system can now be configured to use multiple threads for routing received webhooks to automations.  A "max webhook routing threads" setting has been added to the Admin Console's Settings screen.
-
-18. The system now supports accounts having timezones that are short names, e.g. "IST".
-
-19. If a polling trigger's settings are edited such that item ids stored in the database are purged when the automation is saved, the system now writes an entry into the automation's history noting the reset.
-
-20. Fixed an issue with the system's OAuth token refresh logic such that when multiple threads are attempting to make an API call all threads will use the updated OAuth access token.  This issue was causing OAuth API's that do token refresh to randomly return 401 errors due to the incorrect access token being used after a refresh was performed, but only when multiple API calls were being made at the same point in time.
-
-21. If an assembly tab is dragged and the mouse button is released with the cursor outside of the browser, the dragged tab is now released instead of forever following the mouse cursor.
-
-22. The Transform Data "Create array" action has been renamed to "Parse array elements from text".
-
-23. Added an "emit trigger data field as array" action to the Transform Data app.
-
-24. The active and inactive automations listed in the automation editor's dashboard can now be sorted by name, via newly added dropdown controls.  The default sorting is now by name.
-
-25. When mapping fields in the automation editor, the popover listing fields now has a link "select via diagram".  Clicking the link hides the dialog window and shows the graphical automation.  Mousing over valid actions/triggers in the diagram will display a list of output fields.  Clicking a field will re-show the dialog and insert the selected field into the mapping.
-
-26. Extensive performance improvements have been made to the automation editor, in terms of initial rendering of the diagram and when making edits to the diagram like moving items up/down, copying items, moving items, and saving changes to triggers/actions/conditionals/loops.
-
-27. In the automation editor, all mappable action fields now display an edit icon next to the field name.  When clicked, a dedicated editor is opened.  The syntax is defaulted based on searching the field's name and help text for a matching syntax name.  The available syntaxes are: HTML, JavaScript, Java, JSON, PHP, SQL, and XML. If no match is found, plain text is used.  When HTML is selected, a preview button appears allowing the HTML to be rendered and previewed.
-
-28. The automation editor's Manage Two-Way Sync Mappings screen has a new "export all mappings as CSV file" link under the search field at the top that will download a CSV file containing all mappings.
-
-29. A checkbox has been added to the deploy automations dialog that allows only accounts linked to the automations to be displayed.  This is for when automations have been previously deployed and linked to accounts and you want to see only accounts having those linked automations.
-
-30. The UI library's default framerate has been changed from 30/second to 120/second.  As a result animations and item dragging are now silky smooth, especially when dragging many modules around in the assembly editor. 
-
-31. The UI library's default delay for detecting double clicks has been reduced from 500ms to 200ms.  This was done to increase the rate that items can be single clicked.
-
-32. When an automation is turned off, any scheduled auto-retries for transaction failures are now removed from the scheduler and won't be automatically retried.
-
-33. Alert emails regarding automation timeouts now include a link to view the automation history entry for the timeout.
-
-34. A long-running SQL query that occurs when routing unary protocol thread webhooks (such as for HubSpot, Mindbody, Zoom) was taking over a second to execute b/c it could not utilize a database index.  A Hazelcast in-memory cache is now used to improve performance for the SQL query, resulting in over 50x improved performance when routing webhooks to automations for apps using unary protocol threads.
-
-35. If a webhook trigger times out based on the subscription plan's automation timeout setting, the timeout error entry in the automation history screen now has a Retry button so the transaction can be retried.
-
-36. When searching for automations in the dashboard, searches by automation id or uuid now return the matching result much faster, especially for accounts having a large number of active/inactive automations.
-
-37. In the automation builder, the search can now be done by either action name or by field mappings.  A combobox next to the search entry field selects the search mode.  The default is by action names.
+10. Automation history now includes the total tasks processed during each execution.  Task totals are only available for new executions going forward.
