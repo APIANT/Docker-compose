@@ -1,19 +1,3 @@
-1. Mapped action output fields in the automation builder and graphical automation history view now have an eye icon next to the step number that can be clicked to view the source action in the diagram.  The source action will be highlighted and scrolled into view.  Click the button at the top of the screen to return back to the field mappings dialog.
+1. Automation history no longer displays "CUSTOMER_ALERT" messages in logged errors.  This change takes effect for newly logged errors only.
 
-2. If an automation has a single trigger, the graphical automation history view now highlights it in green even if the trigger emits no data for processing, to indicate that it successfully did its processing.
-
-3. When non-webhook automations are saved, an erroneous "The automation has been reset..." message will no longer be written to the automation history when in fact the automation was not reset due to no modified trigger settings.
-
-4. Automation history is now written into Lucene after every 50th processed data row, rather than only after all data rows have processed.  The expected benefits are to reduce memory usage for automations that process lots of data rows, plus to speed up the time in which automation history becomes available to access after automations complete processing.
-
-5. Existing Bitly endpoints have been deprecated b/c they are turning off their v3 API.  A new "create bitlink" action has been added that uses their v4 API.
-
-6. A change has been made to try to ensure that when an automation is timed out that an error entry about the timeout is written to the automation's history.
-
-7. Added a "Data Rows - Standardize Schema" module that makes all data rows have the same XML schema by adding nodes and attributes where needed.
-
-8. The UI library's setting to detect double-clicks has been increased slightly from 200ms to 250ms, in order to help make it easier for double clicks to be recognized.
-
-9. In the automation editor, action field mappings can now be copied from one action into others.  Right click on an action and choose the "copy field mappings" context menu option to copy the action's field mappings.  Then right click on a destination action and choose the "paste field mappings" option to paste the field mappings.  Mappings will be pasted into fields based on field name matches.  Invalid mappings will not be pasted.  Once copied, the mappings can be pasted into other actions as needed, even in different automations.  The main usage for this functionality is to make is easier to replace a deprecated action with a newer version.
-
-10. Automation history now includes the total tasks processed during each execution.  Task totals are only available for new executions going forward.
+2. The top-level automation history screen now only auto-updates as the automation executes if only a single page of history has been loaded, or if the scrolled view is at the top of the history.  This change prevents the screen from being cleared and reset to the top when the automation runs when viewing old history entries, such that the auto-refresh doesn't interfere with troubleshooting. 
