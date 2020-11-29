@@ -1,39 +1,31 @@
-This is primarily a phase 2 release to utilize the two newly added columns in the keyvalue database table for denormalization.  Also, all database SQL that interacts with the keyvalue table has been optimized by ensuring indexes are utilized, resulting in the best possible performance for keyvalue table operations.
+1. Fixed an issue where after an automation was deployed to an account, data within the automation was still associated with the source account instead of the target account.  The most noticeable side effect was that dynamic field mappings would not appear when actions in the deployed automation were edited.
 
-1. When action modules iterate through input data due to having the "iterate action assembly for input array data" option enabled, the automation logs now include entries for the current iteration number and the total number of iterations being performed.
+2. Fixed an issue introduced in the previous release where temporary file URL generation within batch jobs became broken due to the system initializing an automation uuid value so that trigger/action assemblies can be better tested when run on the server due to some modules needing a non-empty automation uuid.
 
-2. Fixed a stack overflow that would halt an automation that contained an action having the "iterate action assembly for input array data" option enabled, where the number of iterations would cause the Java stack to be exhausted.  When this occurred, the halted automation would remain in the work queue, preventing further processing until the work queue was restarted.
+3. The "CSV to XML" subassembly has been deprecated and a new version has been added that emits columns as XML nodes rather than attributes.
 
-3. The performance of resetting automations via the gear menu icon menu option in the automation editor's dashboard is greatly improved, as a result of the keyvalue database table changes.  A test polling automation that had nearly 100,000 stored item identifiers previously took 4.5 minutes to reset.  Now it takes a few seconds.
+4. Fixed an isolated rendering issue with the automation editor caused by a certain arrangement of conditionals, where the conditionals would not be rendered in the expected layout.
 
-4. The performance of the Manage Stored Data screen in the automation editor is greatly improved, as a result of the keyvalue database table changes.  A test automation with nearly 100,000 entries would take around a minute to load a page of data rows.  Now it takes less than a second.
+5. Fixed the File - CSV module so it works as expected instead of returning a 500 error.
 
-5. The performance of the Two-Way Sync Mappings screen in the automation editor is greatly improved, as a result of the keyvalue database table changes.  The screen could previously take over a minute to return a page of data rows.  Now it takes around a second.
+6. Fixed the "Transform Date Time" "modify and reformat date time" action so that when a timezone offset is specified, the offset is computed taking into account the input date and time value, which in turn takes into account any future or past timezone changes due to Daylight Saving.  Previously the offset was being computed using the server's current date and time.  So if the input date resulted in a different timezone offset due to Daylight Saving, the resulting value was incorrect.
 
-6. If a JSON string is stored in the Simple DB as a value, the Simple DB Select module will now emit the value as a JSON string instead of a JSON object when running in the assembly editor.
+7. Improved the rendering of the automation editor such that when automation diagrams are loaded the "Loading..." spinner stays onscreen until the diagram is fully rendered (avoiding the screen being empty for a second or two for very large diagrams) and the diagram no longer jumps around due to collapsed groups when initially shown.
 
-7. When a trigger or action assembly is executed on the server via the "execute this assembly on the server" option under the Developer menu in the assembly editor, the system now uses a temporary automation uuid that matches what is used when running triggers and action in the assembly editor.  This is primarily so "automation scope" can be tested in the Simple DB modules.
+8. The Text Value module in the assembly editor now defaults the editor syntax to "Text", rather than "XML".  If the text starts with "<" the syntax is defaulted to "XML".  If the text starts with "<jsp" the syntax is defaulted to "JSP".
 
-8. In the automation builder, newly added triggers and actions with settings now have their "Don't show settings when deployed" option checked by default.
+9. A change has been made to the automation processing engine in the way that it requests Java to perform garbage collection.  Previously the system would ask Java to perform garbage collection only when all automations were idle, before every 100th execution of an automation.  The theory was that it was best to not to request garbage collection while automations were processing, to avoid any performance penalty.  Unfortunately this caused a problem b/c a single long-running automation would prevent garbage collection from occurring, which caused memory usage to grow without bounds until the long-running automation was finished.  A contributing factor was that Java was not automatically executing its garbage collector, seemingly b/c of the system's continuous processing.  Now garbage collection is requested before every 50th execution of an automation, even if other automations are being executed.  In addition, the automation execution engine now requests Java garbage collection after every 50th data row is processed.  These changes should help to reduce peak memory usage and avoid memory exhaustion.
 
-9. In the automation editor's lowest-level graphical automation history view, the background color of the Settings tab is now lighter so disabled settings controls are more visible.  Also, the background color of the Log tab is now white to match the color of the log text display area.
+10. The automation processing engine now writes automation history data into Lucene upon every 50th processed trigger data row even if each data row experienced an error.  Previously data was written into Lucene on every 50th trigger data row only if not error occurred.  This change reduces memory consumption and improves the performance of storing automation history data for the scenario when an automation processes lots of trigger data rows and many rows encounter errors.
 
-10. In the automation editor's lowest-level graphical automation history view, the Criteria-Result popover that appears when mousing over conditionals is now wider and taller, with the Criteria and Result displayed side-by-side so more information can be viewed, especially for conditionals within loops that perform many iterations.
+11. The automation editor's Connections screen now always allows the Default account to be deleted.  Previously the Default account could only be deleted when it was the last connection.  If the app has a second account connected, that connection will then become the default account and any automations that reference the second connection are turned off.  If the app has more than 2 accounts connected, a selection dialog will appear allowing one of the named accounts to be selected as the new Default account.  If a selection is made, all automations referencing the selected account will be turned off.
 
-11. In the Admin Console, any changes made on the Subscription Plans screen now result in the Save and Activate button flashing until the button is clicked and the changes are saved.
+12. Fixed an issue with the automation editor's top-level automation history screen that would sometimes cause the total number of tasks to be displayed as "null".
 
-12. When editing action, trigger, or subassembly diagrams in the assembly editor, if the associate app has multiple connected accounts a dropdown pick list now appears at the bottom of the editor to the left of the Quick Picks area.  Selecting an account from the dropdown will cause the editor to use the selected account when the diagram is executed.  If accounts are added/removed in the automation editor, deselect and reselect the diagram's tab to refresh the account list.
+13. The Admin Console's "Memory Usage" screen now has a button that allows a Java heap snapshot of the server to be saved.  The button is only visible to the root admin account.
 
-13. If a sub-module nested with a Loop module is configured with a data path that is not a sub-path of the configured looped data row path, the server-side implementation no longer hits a runtime error.  Instead, the module now logs a notification into the debug log and uses an empty value.
+14. The Automation Editor's field mappings now display just the first 20 characters of the trigger/action name, rather than the item's step number (which could become very long for complex action logic).  Mousing over the trigger/action name will display the item's step number and full name in a tooltip.
 
-14. The automation editor's dashboard and connection screens are now scrollable on touch devices.
+15. Fixed an issue where sometimes when connecting to an OAuth app the previously connected app's authorization dialog would erroneously appear instead of the selected app's authorization dialog.
 
-15. A new right-click menu option has been added in the automation editor's dashboard to access account-level data stored in the system's database.  The new screen is the same as the Manage Stored Data screen for automations, but it only shows data stored in the system's database at the account level.  The same permissions are needed as for the Manage Stored Data screen to access the new screen: assembly developer, switch account, or automation debug log permissions.
-
-16. After an action is copied from one automation and pasted into a different automation, the action's output fields are now mappable in downstream actions.  Previously "null" would appear, indicating an invalid mapping reference.
-
-17. When automations are deployed, the on/off status of each deployed automation is now listed.  This is useful when re-deploying automations to accounts that already have the automations, where the system may have to turn off running automations based on the deployed changes, where turning on the automations provides the ability to configure the modifications.
-
-18. Greatly improved the performance of turning automations on and off in the dashboard.  Performance was poor when thousands of automations were in the system.
-
-19. The "turn all on" and "turn all off" buttons have been removed from the automation editor's dashboard due to issues caused when turning on multiple deployed automations at once.
+16. The Transform Number's "evaluate math formula" action no longer add zero to the computed result, which could cause a zero being appended to the final value rather than the originally intended conversion to a numeric result. 
