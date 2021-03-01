@@ -1,31 +1,81 @@
-1. Fixed an issue where after an automation was deployed to an account, data within the automation was still associated with the source account instead of the target account.  The most noticeable side effect was that dynamic field mappings would not appear when actions in the deployed automation were edited.
+1. The "is valid email" conditional test's logic has been revised so that valid emails previously computed to be invalid are now computed to be valid.
 
-2. Fixed an issue introduced in the previous release where temporary file URL generation within batch jobs became broken due to the system initializing an automation uuid value so that trigger/action assemblies can be better tested when run on the server due to some modules needing a non-empty automation uuid.
+2. Linked accounts can now be created in the Admin Console's User Accounts screen.  Select an account and click the new Create Linked Account button.  Linked accounts show a link icon in the list.  When a either a parent account or a linked account is accessed in the Automation Editor, a new Switch menu option appears in the account menu at the top right.  A dialog will appear to switch among the linked accounts.  App connections created in the parent account are shared with all child accounts and appear with [shared] appended to their names when configuring triggers and actions.
 
-3. The "CSV to XML" subassembly has been deprecated and a new version has been added that emits columns as XML nodes rather than attributes.
+3. The JSON Array Builder module now behaves like the JSON Builder module and will emit the generated JSON when an error occurs in the assembly editor, making it possible to troubleshoot malformed JSON after data has been substituted.
 
-4. Fixed an isolated rendering issue with the automation editor caused by a certain arrangement of conditionals, where the conditionals would not be rendered in the expected layout.
+4. The Extension - Server-Side Script module has been fixed for PHP code such that ARG replacements surrounded by single quotes now have single quotes within the substituted value escaped with a backslash.  ARG replacements surrounded by double quotes now have double quotes within the substituted value escaped with a backslash as well.
 
-5. Fixed the File - CSV module so it works as expected instead of returning a 500 error.
+5. The entry fields in the JSON Builder and JSON Array Builder now default the code editor to the JSON syntax, rather than XML.
 
-6. Fixed the "Transform Date Time" "modify and reformat date time" action so that when a timezone offset is specified, the offset is computed taking into account the input date and time value, which in turn takes into account any future or past timezone changes due to Daylight Saving.  Previously the offset was being computed using the server's current date and time.  So if the input date resulted in a different timezone offset due to Daylight Saving, the resulting value was incorrect.
+6. Fixed an issue that sometimes occurred in the automation history screen where performing a search for a value in combination with a data range would not return results even though matching transactions are in the system.
 
-7. Improved the rendering of the automation editor such that when automation diagrams are loaded the "Loading..." spinner stays onscreen until the diagram is fully rendered (avoiding the screen being empty for a second or two for very large diagrams) and the diagram no longer jumps around due to collapsed groups when initially shown.
+7. Improvements have been made to the automation work queue such that it is better able to utilize all configured processing threads when many automations are queued for execution.
 
-8. The Text Value module in the assembly editor now defaults the editor syntax to "Text", rather than "XML".  If the text starts with "<" the syntax is defaulted to "XML".  If the text starts with "<jsp" the syntax is defaulted to "JSP".
+8. When a failed transaction is auto-retried, if the automation is running when the retry occurs the retry will now wait for the automation to complete before it is executed.  Previously if the automation was running when the retry was executed the retry would fail to run b/c by default the system does not allow an automation to run concurrently.
 
-9. A change has been made to the automation processing engine in the way that it requests Java to perform garbage collection.  Previously the system would ask Java to perform garbage collection only when all automations were idle, before every 100th execution of an automation.  The theory was that it was best to not to request garbage collection while automations were processing, to avoid any performance penalty.  Unfortunately this caused a problem b/c a single long-running automation would prevent garbage collection from occurring, which caused memory usage to grow without bounds until the long-running automation was finished.  A contributing factor was that Java was not automatically executing its garbage collector, seemingly b/c of the system's continuous processing.  Now garbage collection is requested before every 50th execution of an automation, even if other automations are being executed.  In addition, the automation execution engine now requests Java garbage collection after every 50th data row is processed.  These changes should help to reduce peak memory usage and avoid memory exhaustion.
+9. Fixed the "is valid email" conditional logic so email addresses containing domains longer than 7 characters are now considered to be valid.
 
-10. The automation processing engine now writes automation history data into Lucene upon every 50th processed trigger data row even if each data row experienced an error.  Previously data was written into Lucene on every 50th trigger data row only if not error occurred.  This change reduces memory consumption and improves the performance of storing automation history data for the scenario when an automation processes lots of trigger data rows and many rows encounter errors.
+10. The system's single setting for the maximum number of work queue threads has been replaced with four separate settings to define the maximum number of batch job, polling automation, webhook automation, and web service work threads.  This provides more control over the allocation of work threads by the type of work, such that any single type of work can no longer consume all available work threads.  This was mostly problematic for systems with a large number of polling automations, where no other type of work would be executed until all the queued polling automations completed and work threads became free, which could take minutes.
 
-11. The automation editor's Connections screen now always allows the Default account to be deleted.  Previously the Default account could only be deleted when it was the last connection.  If the app has a second account connected, that connection will then become the default account and any automations that reference the second connection are turned off.  If the app has more than 2 accounts connected, a selection dialog will appear allowing one of the named accounts to be selected as the new Default account.  If a selection is made, all automations referencing the selected account will be turned off.
+11. The Dropbox integration has been updated so the OAuth access token is now refreshed.
 
-12. Fixed an issue with the automation editor's top-level automation history screen that would sometimes cause the total number of tasks to be displayed as "null".
+12. App connections can now be shared across multiple accounts within a tenant system or the main system.  Shared app connections are those that are connected using the special "setup" account.  The password to the "setup" account is the same as for the root "admin" account.  App connections in the "setup" account appear when configuring trigger and actions in the automation editor with "(shared)" appended to the connection name.
 
-13. The Admin Console's "Memory Usage" screen now has a button that allows a Java heap snapshot of the server to be saved.  The button is only visible to the root admin account.
+13. Modified the logic to fetch the automation history 2nd-level drilldown from Lucene such that the system can now paginate through many thousands of processed data rows without timing out or exhausting server memory.
 
-14. The Automation Editor's field mappings now display just the first 20 characters of the trigger/action name, rather than the item's step number (which could become very long for complex action logic).  Mousing over the trigger/action name will display the item's step number and full name in a tooltip.
+14. The Twilio send SMS action and subassembly have been updated to catch returned errors from their API.
 
-15. Fixed an issue where sometimes when connecting to an OAuth app the previously connected app's authorization dialog would erroneously appear instead of the selected app's authorization dialog.
+15. The automation builder has a new right-click menu option to open and close all groups.
 
-16. The Transform Number's "evaluate math formula" action no longer add zero to the computed result, which could cause a zero being appended to the final value rather than the originally intended conversion to a numeric result. 
+16. ActiveMQ is now configured to clean up unused message queues, which were previously orphaned when webhook automations were turned off or deleted.
+
+17. Fixed the automation dashboard so the horizontal scrollbar now only appears when really needed instead of always appearing when the vertical scrollbar appeared.  Only happened on Windows.
+
+18. Automation history URL links are now correctly escaped.
+
+19. The functionality to select a default connection when a default connection is disconnected when multiple other connections exist in the app connection screen in the automation editor is now fixed so it works when multiple apps are connected.
+
+20. Fixed an issue with the System "execute automation" action that could result in multiple copies of the automation to execute concurrently with the "wait for completion" option was selected and when the executed automation took longer to complete than the system's configured socket timeout setting.
+
+21. In the graphical automation history view, mapped fields now show their help info, if any is available, when moused over.
+
+22. Added an "emit fixed number of loop iterations" action to the Transform Data app.
+
+23. The Donor Perfect integration has been updated so all actions and triggers now throw error if the connected account is invalid, which can happen when the password is changed for the connected account.
+
+24. Added a Lookup Tables app with many actions for reading/writing/deleting values in the system's database, plus actions for looking up information about countries and USA states.
+
+25. Added a "get automation folder" action to the System app that returns the name of the folder the automation is saved in within the dashboard.
+
+26. In the automation editor, if a field mapping search is performed and a highlighted action is edited such that its field mappings no longer contain a match, when the action is saved it will now be unhighlighted.
+
+27. In the automation editor, if the "find items mapped to this" option is performed for an action and a highlighted action is edited such that its field mappings no longer references the searched action, when the action is saved it will now be unhighlighted.
+
+28. The automation editor's dashboard now displays a link icon next to child automations that are linked to parent automations in another account.  The link icon is only displayed when switched into the account, e.g. for admins.
+
+29. Added a "compute hash" action to the Transform Data app, which applies a Base64, MD5, or SHA-1 hash to an input value.
+
+30. The System "execute automation" action can now select to run a linked parent account's automation.
+
+31. When module dropdown controls have a wire connected in the assembly editor, then the wire is disconnected the dropdown control is now enabled rather than remaining in a disabled state.
+
+32. The automation editor now has a zoom slider for zooming out to see more of an automation's diagram.  When zoomed out, clicking an item will reset the zoom to 1:1 and also scroll the clicked item into view.
+
+33. The assembly editor now displays an error when diagrams are loaded or saved if any module is underneath another module and obscured from view.  Diagrams cannot be saved with obscured modules because they can cause unexpected runtime execution issues.
+
+34. The System app's "execute automation" action will no longer return an error when "wait to complete" is unchecked and the automation is executing when the action is invoked.  Instead the execution of the automation will be queued and no error will be returned.
+
+35. Accounts having the Assembly Developer or Switch Account permissions can now access the "concurrency limit" menu option for polling automations.  The menu option is found in the automation editor's dashboard gear icon menu for automations, under Processing.  This menu option was previously only available for webhook automations.  The purpose of being able to set the concurrency limit for non-webhook automations is to allow the System "execute automation" action to be able to invoke an automation when the "wait for completion" option is disabled, such that a loop can cause multiple concurrent threads of processing to occur at once.  So if a loop has 100 items to process by executing another automation, that automation can now be configured to process the items in parallel.
+
+36. Fixed an issue with the automation dashboard where it was auto-scrolling to the top of the screen every second under certain circumstances.
+
+37. The automation work queue is now able to keep all of the server's configured automation processing threads saturated when under load.  Previously the automation work queue was performing Java garbage collection periodically, which would lead to under-utilization of processing threads as garbage collection was performed (could take several seconds on a busy system).  Now Java garbage collection is performed in a separate thread, which allows automations in the queue to be routed to processing threads without any delays.
+
+38. Fixed a runtime error that could occur in the Data Rows - Count Subnodes module.
+
+39. Searches done in the automation builder now have up/down arrows to select items in the search results.  The currently selected item is highlighted green.
+
+40. The automation builder search functionality now supports searches for action settings.  A setting name and value can be entered, case insensitive.  Matches are done on any portion of the setting name or value.  The setting name or value can also be empty, allowing searches for all settings regardless of their value, or for searches for all settings having a particular value.
+
+41. The automation builder search functionality is now available from the graphical automation history view.  The search functionality is always displayed in the history view.

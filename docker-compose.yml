@@ -137,11 +137,14 @@ services:
       # ----------------------------------------------------------------------------------------------------------------------
       # This section of environment variables are settings that will vary based upon the amount of available server RAM
       # ----------------------------------------------------------------------------------------------------------------------
-          # The server will execute concurrent server-side assemblies and automations in separate Java threads
-          # Each Java thread's memory consumption varies depending on the data being processed
-          # New threads are only spawned when concurrent requests are received
-          # If all threads are busy, requests are queued      
-          - APIANT_NATIVE_WORK_QUEUE_MAX_THREADS=10
+          # The server will execute automations, batch jobs, and web services in separate threads
+          # These settings control the maximum number of threads by item type
+          # If all threads of a particular type are busy, new work items are queued until free threads become available
+          # Generally, the sum of all the configured max threads should not be much more than the number of CPU cores
+          - APIANT_NATIVE_WORK_QUEUE_MAX_BATCH_JOB_EXEC_THREADS=10
+          - APIANT_NATIVE_WORK_QUEUE_MAX_POLLING_AUTOMATION_EXEC_THREADS=10
+          - APIANT_NATIVE_WORK_QUEUE_MAX_WEBHOOK_AUTOMATION_EXEC_THREADS=10
+          - APIANT_NATIVE_WORK_QUEUE_MAX_WEB_SERVICE_EXEC_THREADS=10
           
           # The max number of failed transactions to be placed into the auto-retry work queue
           - APIANT_NATIVE_WORK_QUEUE_MAX_QUEUED_RETRIES=250
