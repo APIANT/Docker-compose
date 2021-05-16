@@ -1,81 +1,113 @@
-1. The "is valid email" conditional test's logic has been revised so that valid emails previously computed to be invalid are now computed to be valid.
+1. If an automation encounters an internal system exception while executing, now the automation cleanly terminates processing instead of remaining stuck in a zombie running state.
 
-2. Linked accounts can now be created in the Admin Console's User Accounts screen.  Select an account and click the new Create Linked Account button.  Linked accounts show a link icon in the list.  When a either a parent account or a linked account is accessed in the Automation Editor, a new Switch menu option appears in the account menu at the top right.  A dialog will appear to switch among the linked accounts.  App connections created in the parent account are shared with all child accounts and appear with [shared] appended to their names when configuring triggers and actions.
+2. If a search is performed in the automation editor's dashboard and no results are found, if a folder has been selected the message that says no automations are found now includes the name of the folder that was searched.
 
-3. The JSON Array Builder module now behaves like the JSON Builder module and will emit the generated JSON when an error occurs in the assembly editor, making it possible to troubleshoot malformed JSON after data has been substituted.
+3. The admin console's user accounts screen now highlights a parent linked account in blue.
 
-4. The Extension - Server-Side Script module has been fixed for PHP code such that ARG replacements surrounded by single quotes now have single quotes within the substituted value escaped with a backslash.  ARG replacements surrounded by double quotes now have double quotes within the substituted value escaped with a backslash as well.
+4. Clicking on a link icon next to an account in the admin console's user accounts screen now performs a search query that returns all linked accounts in the group.
 
-5. The entry fields in the JSON Builder and JSON Array Builder now default the code editor to the JSON syntax, rather than XML.
+5. The Switch Account dialog now shows link icons for linked accounts.  Clicking a link icon performs a search query that returns all linked accounts in the group.  Parent accounts are highlighted in blue.
 
-6. Fixed an issue that sometimes occurred in the automation history screen where performing a search for a value in combination with a data range would not return results even though matching transactions are in the system.
+6. Exports and publishing of large automations with many actions have been greatly optimized by removing replicated content.  A large automation that previously took 4 minutes to export now takes 5 seconds.
 
-7. Improvements have been made to the automation work queue such that it is better able to utilize all configured processing threads when many automations are queued for execution.
+7. When an automation is edited that contains nested groups, inner grouped items no longer erroneously appear when the outer group is opened.
 
-8. When a failed transaction is auto-retried, if the automation is running when the retry occurs the retry will now wait for the automation to complete before it is executed.  Previously if the automation was running when the retry was executed the retry would fail to run b/c by default the system does not allow an automation to run concurrently.
+8. Accounts having the "Publish to Production" permission on development systems now have a "Publish all" button in the automation editor's dashboard to publish all selected automations to production servers at once.
 
-9. Fixed the "is valid email" conditional logic so email addresses containing domains longer than 7 characters are now considered to be valid.
+9. In the automation editor, after performing a "find items mapped to this" on an action, if an item is edited the editor no longer resets the scroll position to the first found item's position.
 
-10. The system's single setting for the maximum number of work queue threads has been replaced with four separate settings to define the maximum number of batch job, polling automation, webhook automation, and web service work threads.  This provides more control over the allocation of work threads by the type of work, such that any single type of work can no longer consume all available work threads.  This was mostly problematic for systems with a large number of polling automations, where no other type of work would be executed until all the queued polling automations completed and work threads became free, which could take minutes.
+10. The total number of tasks in the automation editor's dashboard can now be clicked, which opens a dialog showing a bar chart of daily task history.
 
-11. The Dropbox integration has been updated so the OAuth access token is now refreshed.
+11. Added a "count array elements" action to the Transform Data app.
 
-12. App connections can now be shared across multiple accounts within a tenant system or the main system.  Shared app connections are those that are connected using the special "setup" account.  The password to the "setup" account is the same as for the root "admin" account.  App connections in the "setup" account appear when configuring trigger and actions in the automation editor with "(shared)" appended to the connection name.
+12. Added a "remove newlines" action to the Transform Text app.
 
-13. Modified the logic to fetch the automation history 2nd-level drilldown from Lucene such that the system can now paginate through many thousands of processed data rows without timing out or exhausting server memory.
+13. When grouping actions in the automation editor, if a single action is selected to be grouped then following actions are no longer erroneously included when the group is created.
 
-14. The Twilio send SMS action and subassembly have been updated to catch returned errors from their API.
+14. After the "find items mapped to this" right-click context menu option is used for an action in the automation editor, when selected actions are opened the mapped item is now highlighted within field mappings.
 
-15. The automation builder has a new right-click menu option to open and close all groups.
+15. The link icon next to linked automations in the dashboard can now be clicked in order to unlink automations.
 
-16. ActiveMQ is now configured to clean up unused message queues, which were previously orphaned when webhook automations were turned off or deleted.
+16. When a previously linked automation is deployed, the system now prompts to ask whether or not to link the automation, instead of assuming that all subsequent deployments will also be linked.
 
-17. Fixed the automation dashboard so the horizontal scrollbar now only appears when really needed instead of always appearing when the vertical scrollbar appeared.  Only happened on Windows.
+17. Added a "Get multiple values" action to the Lookup Tables app.
 
-18. Automation history URL links are now correctly escaped.
+18. The non-deprecated Simple DB modules can now be placed as submodules within Loop modules in the assembly editor.
 
-19. The functionality to select a default connection when a default connection is disconnected when multiple other connections exist in the app connection screen in the automation editor is now fixed so it works when multiple apps are connected.
+19. The admin console's Work Queue screen now shows the progress of automations as their loops process iterations, including for nested loops.
 
-20. Fixed an issue with the System "execute automation" action that could result in multiple copies of the automation to execute concurrently with the "wait for completion" option was selected and when the executed automation took longer to complete than the system's configured socket timeout setting.
+20. The automation history screen's execution status (highlighted with a green background at the top) now shows the progress of automations as their loops process iterations, including for nested loops.
 
-21. In the graphical automation history view, mapped fields now show their help info, if any is available, when moused over.
+21. When a linked parent account is given the "Deploy Automations" permission, the deploy automations dialog will now only fetch linked child accounts rather than all accounts.
 
-22. Added an "emit fixed number of loop iterations" action to the Transform Data app.
+22. The assembly editor now saves its session of opened tabs.  If the editor is closed with opened tabs, the next time it is loaded the editor prompts to ask if the previous session of opened tabs should be restored.  Tabs that contain older versions of assemblies or version comparisons are not currently included in sessions.
 
-23. The Donor Perfect integration has been updated so all actions and triggers now throw error if the connected account is invalid, which can happen when the password is changed for the connected account.
+23. In the automation editor's history screens, when "Retry All Errors" is used the UI no longer display a modal timer dialog and instead goes to the top page of automation history (if the 2nd-level drilldown page was being used) and progress is now shown via the typical green highlighted activity bar near the top of the page.  This allows retry processing to be halted, which was previously not possible.
 
-24. Added a Lookup Tables app with many actions for reading/writing/deleting values in the system's database, plus actions for looking up information about countries and USA states.
+24. Error transactions being manually retried from the automation editor's History screens now appear in the Admin Console's Work Queue screen.
 
-25. Added a "get automation folder" action to the System app that returns the name of the folder the automation is saved in within the dashboard.
+25. In the automation editor's history, when retrying failed transactions and choosing the "re-use stored data" option, the system now prompts to ask if the retry should be performed from the action that failed or from the first action.  Previously the system would only retry from the failed action.
 
-26. In the automation editor, if a field mapping search is performed and a highlighted action is edited such that its field mappings no longer contain a match, when the action is saved it will now be unhighlighted.
+26. In the automation editor's history, when retrying failed transactions and choosing the "manually edit stored data" option, after saving the edited data the system now prompts to ask if the retry should be performed from the action that failed or from the first action.  Previously the system would only retry from the failed action.
 
-27. In the automation editor, if the "find items mapped to this" option is performed for an action and a highlighted action is edited such that its field mappings no longer references the searched action, when the action is saved it will now be unhighlighted.
+27. In the automation editor's history screens, the Retry All functionality now processes all transactions that match the current search and filter, rather than just the records loaded into the browser (25 records per page).
 
-28. The automation editor's dashboard now displays a link icon next to child automations that are linked to parent automations in another account.  The link icon is only displayed when switched into the account, e.g. for admins.
+28. In the automation editor's history top-level screen, the Retry All functionality now only retries transactions matching the search query and date range.
 
-29. Added a "compute hash" action to the Transform Data app, which applies a Base64, MD5, or SHA-1 hash to an input value.
+29. In the automation editor's history screens, when "Retry All Errors" is used and more than 10 records will be retried, the UI now displays a confirmation prompt before starting the retries.
 
-30. The System "execute automation" action can now select to run a linked parent account's automation.
+30. The Automation Info and System Info modules now emit the automation's name.  The name will be empty when running in the assembly editor or automation editor.
 
-31. When module dropdown controls have a wire connected in the assembly editor, then the wire is disconnected the dropdown control is now enabled rather than remaining in a disabled state.
+31. If an automation's execution is skipped due to its defined execution window, the system now displays an information entry in the automation's history screen.
 
-32. The automation editor now has a zoom slider for zooming out to see more of an automation's diagram.  When zoomed out, clicking an item will reset the zoom to 1:1 and also scroll the clicked item into view.
+32. Fixed a database connection error that would occur when deploying very large automations.
 
-33. The assembly editor now displays an error when diagrams are loaded or saved if any module is underneath another module and obscured from view.  Diagrams cannot be saved with obscured modules because they can cause unexpected runtime execution issues.
+33. ActiveMQ has been upgraded from v5.15.11 to v5.15.13.  Versions later than v5.15.13 are not compatible with the system, primarily due to needing Java 9 (the system currently uses Java 8).
 
-34. The System app's "execute automation" action will no longer return an error when "wait to complete" is unchecked and the automation is executing when the action is invoked.  Instead the execution of the automation will be queued and no error will be returned.
+34. Hazelcast has been upgraded from v4.0.1 to v4.2 and its management console accessible via the admin console's Hazelcast Dashboard screen has also been upgraded.
 
-35. Accounts having the Assembly Developer or Switch Account permissions can now access the "concurrency limit" menu option for polling automations.  The menu option is found in the automation editor's dashboard gear icon menu for automations, under Processing.  This menu option was previously only available for webhook automations.  The purpose of being able to set the concurrency limit for non-webhook automations is to allow the System "execute automation" action to be able to invoke an automation when the "wait for completion" option is disabled, such that a loop can cause multiple concurrent threads of processing to occur at once.  So if a loop has 100 items to process by executing another automation, that automation can now be configured to process the items in parallel.
+35. Hawt.io has been upgraded from v2.8 to v2.13.2.  It is used in the admin console's ActiveMQ Dashboard screen.
 
-36. Fixed an issue with the automation dashboard where it was auto-scrolling to the top of the screen every second under certain circumstances.
+36. Popovers that display assembly and automation version history now wrap the version text on multiple lines, rather than using tooltips to display all text.
 
-37. The automation work queue is now able to keep all of the server's configured automation processing threads saturated when under load.  Previously the automation work queue was performing Java garbage collection periodically, which would lead to under-utilization of processing threads as garbage collection was performed (could take several seconds on a busy system).  Now Java garbage collection is performed in a separate thread, which allows automations in the queue to be routed to processing threads without any delays.
+37. When the "find items mapped to this" right-click context menu option is used on an action, if mappings to the action are removed from conditionals and loops they are now unhighlighted.
 
-38. Fixed a runtime error that could occur in the Data Rows - Count Subnodes module.
+38. Both the Switch Account dialog (for admins) and the Switch dialog (for admins and for parent accounts having linked child accounts) in the automation editor now open the selected account in a new browser tab/window.
 
-39. Searches done in the automation builder now have up/down arrows to select items in the search results.  The currently selected item is highlighted green.
+39. The Account Data screen in the automation editor (accessed via the "User account data" right-click menu option on the dashboard's background) now has an "Export as CSV" button that will download all records matching the search query as a CSV file.
 
-40. The automation builder search functionality now supports searches for action settings.  A setting name and value can be entered, case insensitive.  Matches are done on any portion of the setting name or value.  The setting name or value can also be empty, allowing searches for all settings regardless of their value, or for searches for all settings having a particular value.
+40. The "Manage Stored Data" submenu item under the "Processing" section of the automation gear icon menu in the automation editor's dashboard has been renamed to "Inspect Stored Data", to avoid confusion with the "Manage" top-level menu section.
 
-41. The automation builder search functionality is now available from the graphical automation history view.  The search functionality is always displayed in the history view.
+41. An issue that caused tabs in the assembly editor to become incorrectly sized too small after an assembly was saved with a change to its name is believed to be fixed.
+
+42. The "Lookup country name or abbreviation" and "Lookup US state name or abbreviation" actions in the Lookup Table app have been deprecated and replaced with new versions that fix misspelled output fields.
+
+43. Added a "Lookup region name or abbreviation for any country" action to the Lookup Table app.
+
+44. The admin console's User Accounts screen has a new "Unlink Account" button that can be used to unlink a child account from its parent account.
+
+45. The OneDrive integration has been deprecated due to Microsoft changing its API.
+
+46. Added a "Save multiple mapped values for key" action to the Lookup Tables app.
+
+47. After deploying an automation, the confirmation dialog that appears no longer displays editor settings on the left side or line numbers, and the dialog is narrower.
+
+48. The system now supports saving an optional phone number with accounts.
+
+49. The "Create or update account" "System" app action now supports a phone number.
+
+50. All "System" app instant triggers that emit customer information now emit a phone number field.
+
+51. The automation editor now limits the total number of actions in an automation to 150.  The editor will display an alert when more than 140 actions are added.  Large automations slow down the browser when editing or viewing history and eventually hit a configured database limit that controls how much data can be saved.  Large automations can be either broken into multiple smaller automations, or more complex actions can be built with the assembly editor that perform more functionality vs. individual steps.
+
+52. After clicking the plus "+" icon to add a trigger or an action in the automation editor, a new "System utility" category option appears.  Selecting this option opens a pick list of system utility triggers or actions.
+
+53. When a non-webhook sub automation called by another automation via the "execute automation" action has its concurrency set to -1, the system now executes the sub automation rather than it remaining queued for execution.
+
+54. Assemblies and modules no longer allow a forward slash "/" in their names.
+
+55. Added a "Fatal Error with Postprocessing [Data Stream]" module that will execute a nested module or subassembly before the parent assembly is halted due to an error condition.
+
+56. When deploying an automation to multiple accounts, a failure in one or more accounts will no longer halt processing.  The automation will be deployed to as many accounts as possible.  Any errors will be displayed in the summary.
+
+57. When mapping fields in the automation editor, actions that have at least one output field can now have additional fields manually entered by name.  This can be used when an action is known to output a certain field but the field is not present in the list.
