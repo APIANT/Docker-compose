@@ -1,1 +1,57 @@
-1. 
+1. The system now supports actions that require human interaction, where automations can be suspended until a human performs a needed action.  The initial implementation supports a moderation queue, where someone must approve or deny items for review.  Under the Human Interaction app, use the "get approval request link" action to insert an item (having a Title and a Description with optional HTML markup, identified by an optional scope) into a moderation queue and to receive a link to the inserted item.  That link should then be delivered to one or more people responsible for its moderation, e.g. via email, SMS, etc.  Then use the "await human approval" action to suspend the automation at that point.  After the item has been moderated, the automation will resume processing and the "await human approval" action will emit a result of "approved" or "denied".  A conditional can then be used to perform needed processing based on the result.  Automations may contain multiple human approvals.  The link to the moderation queue item opens a page that contains all items in the queue (specified by scope), so the person or people responsible for review can review all items in the queue.  The moderation scope can be used as a way to limit access to certain queues, e.g. "CEO" scope vs. "Manager" scope.
+
+2. When an automation is executed via the System app's "execute automation" action, it now appears in the Admin Console's Work Queue screen when it is running.
+
+3. Refactored a slow database query that was used to increment the count of automation executions.  The query impacted the performance of executing automations and the performance of turning automations on/off in the dashboard, depending on how many times the automation was previously executed and the total number of automations in the system.
+
+4. In the automation history graphical view, loops that were executed are no longer shown as if they were not executed (i.e. not grayed out).
+
+5. In the automation history graphical view, loops now display the number of iterations they performed.  This will only be shown for newly processed data going forward.
+
+6. In the automation history graphical view, conditionals embedded within loops now display the number of true and false evaluations that occurred.  For example, if a loop was iterated 10 times, the condition may evaluate false 4 times and true 6 times.
+
+7. When adding triggers or actions to an automation, the popup menu offers a new option to find triggers or actions.  Instead of searching for app names and descriptions, these searches are done for action/trigger names and descriptions.  These searches make it easier to find triggers and actions based on functionality, like "csv", "invoice", "file", etc.
+
+8. HTTP 401 authorization errors that are returned from OAuth API's are now automatically retried 3 times after 5, then 10, then 15 seconds.  This is intended to alleviate random failures, particularly with the Zoom API.
+
+9. When items are moused over in the graphical automation history view, the item now shows its execution time.  This includes Loops, which previously had no mouseover information.  This info is only shown for newly processed data going forward.
+
+10. The Google Contacts integration has been deprecated b/c Google is turning it off.  The API will start failing June 15.
+
+11. The automation editor now has a "Break Loop" mechanism that can be used to break loop processing at a specific point, typically within a Conditional.  To add a loop break, click the new "Break loop" menu item that appears when clicking a plus "+" icon within a loop.  Loop breaks are scoped to their closest parent Loop.
+
+12. The Outlook integration has been deprecated b/c it no longer works.
+
+13. When using search functionality in the automation builder, items are now positioned as close to the center of the screen as possible depending on the item's location and the width of the diagram.
+
+14. If an automation loop had a nested conditional and if an action following the conditional had data mappings that contained values from actions in both the true and false branches of the conditional, the automation engine was erroneously mapping data that occurred in previous loop iterations.  This is now fixed, by the automation engine first clearing action output data from all actions in the scope of the loop before the next loop iteration begins to process.
+
+15. Fixed a SQL exception that would occur in the "inspect stored data" screen for an automation when using the "date" search and then clicking the "delete all" button.
+
+16. The UI now adjusts border sizes when the browser's page zoom is less than 100% so that borders around UI controls such as edittexts are no longer clipped.
+
+17. The automation execution engine now has logic to escape quoted string mappings for the Transform Data app's "Evaluate JavaScript Expression" action.  When a mapped field is surrounded by either single or double quotes, the engine will escape single/double quotes within the mapped value as needed such that the resulting substituted value will correctly compile as a valid string.  Newline characters are also escaped.  The logic will not alter mapped values that are already correctly escaped, e.g. those emitted by the Transform Text app's "Format JavaScript text" action. This functionality is not yet enabled in all systems.  A hidden system config setting is used to enable this functionality. 
+
+18. The Transform Text app's "Format JavaScript text" action is deprecated since the automation execution engine now natively handles its intended purpose.
+
+19. Fixed an issue with the server-side Java implementation of the Data Rows - Count Subnodes module such that when the root data row select multiple nodes, output nodes are now created in all child subnodes rather than just in the first child.
+
+20. After automations are deployed to other accounts, the summary dialog now shows any errors that occurred for each automation.  Previously it would only show if the automation was turned on or off.
+
+21. Fixed an issue where automation tiles in the dashboard that had the "link" icon displayed where not vertically shrinking to their original height after the "hide" option was used to hide the polling schedule.  This was only happening for linked automations displaying the "link" icon next to them.
+
+22. When deploying automations to accounts, the "All" checkbox now fetches all matching accounts and checks them, rather than erroneously just checking the ones paginated into the browser which would cause accounts not loaded into the browser to not be deployed the automation(s).
+
+23. When deploying polling automations, if the destination automations are turned on and are updated in a manner such that they receive a different polling schedule, they are now turned off and on by the system in order to activate the new polling schedule.  An information entry is also made in the automation's history about this.
+
+24. When deploying automations, the progress dialog now shows additional progress information rather than just a timer.
+
+25. The system has a new JSON parser library integrated, but it is not yet active.  A hidden system config setting chooses between using the existing JSON parser and the new one.  Was discovered that the prior JSON library had horrible performance and memory usage.  A 8MB JSON string was taking over 90 seconds to parse and convert to XML.  The new library is able to parse and convert the same string in less than 1/2 a second.  The new JSON parser is not expected to be activated in systems until maybe the August timeframe.
+
+26. The Transform Text "replace text" action will now treat a search string of "\n" as a newline character, to make it possible to replace newlines within text.  A typical usage is to replace newlines with HTML "<br>" sequences.
+
+27. In the admin console, when adding allowed apps to an account's overrides the UI no longer allows apps to be added to the list if they already exist, avoiding duplicates.
+
+28. The compression of automation log files and their uploading to Amazon S3 is now done in a separate thread, to avoid possible timeouts.
+
+29. The log viewer in automation history now shows its settings when logs are viewed.
