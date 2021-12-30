@@ -276,6 +276,23 @@ services:
           # Set to -1 to turn off all automation logging
           - APIANT_MAX_BATCH_JOB_LOG_AGE_DAYS=90
           
+          # A single message queue is used to receive all inbound webhooks as soon as they are received
+          # Then these messages are read off this single queue and routed to individual queues for automations
+          # Each automation has its own message queue
+          # This setting controls how many routing threads are used to route webhooks from the received queue to the automation queues
+          - APIANT_ACTIVEMQ_MAX_ROUTING_THREADS=25
+          
+          # A single message queue is used to receive all inbound webhooks as soon as they are received
+          # Then these messages are read off this single queue and routed to individual queues for automations
+          # Each automation has its own message queue
+          # This setting controls how many routing threads are used to route webhooks from the received queue to the automation queues
+          - APIANT_HAZELCAST_MAX_ROUTING_THREADS=25
+          
+          # Automations store automation history into Lucene for full-text searchability
+          # Writing data into Lucene is very I/O intensive.  
+          # This setting controls how many threads are used to write automation history data into Lucene
+          - APIANT_MAX_LUCENE_WRITER_THREADS=10
+          
           # If true, end users can sign into the system using popular OAuth social apps
           # Ignored if SSO (Single Sign-On) is enabled
           - APIANT_SIGNIN_WITH_OAUTH_OPTIONS_IS_ENABLED=false

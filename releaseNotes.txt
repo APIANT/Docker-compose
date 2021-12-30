@@ -1,99 +1,81 @@
-1. Fixed the graphical automation history where the number of loop iterations displayed was one greater than the actual number of iterations performed.  This only occurred when another action followed the loop.  Only newly processed data going forward is fixed.
+1. The system now supports subroutines within automations.  A subroutine is functionally the same as using the "execute automation" action with "wait to complete" enabled.  The main differences are that subroutines have defined inputs and outputs, and when viewing the graphical automation history clicking the "execute subroutine" action will open up a window to drill into the subroutine's processing of the transaction.  Also, when a parent automation invokes a subroutine, the subroutine executes immediately with no consideration for concurrency.  Multiple automations that invoke the same subroutine at the same time will result in multiple copies of the subroutine executing at the same time.  A new catalog of subroutines appears on the left side of the automation builder screen.  Click the "create a subroutine" button at its top to start a new subroutine.  The empty subroutine will consist of a "subroutine input" trigger and a "subroutine output" action.  For both of these, edit their settings to configure their fields.  Subroutines can contain any logic, including nested subroutines, snooze actions, and human interaction actions.  Use the "System" app's "execute subroutine" action to invoke a saved subroutine.  Right click on subroutines in their catalog to access operations that can be performed upon subroutines.
 
-2. Refactored how the system searches for references within automations.  Instead of using SQL "LIKE" queries for text within automation XML stored in MySQL, the system now uses Lucene.  This greatly improves searching when the system has many automations.  Functionality that is now much faster includes: assembly editor catalog searching for automations that use an assembly, renaming assemblies referenced in automations, the "referenced by" gear menu option in the automation editor's dashboard, importing automations, the sending of "system" webhooks, and other server-side functionality.
+2. The countdown timers for polling automations in the dashboard and history screens are now more accurate.
 
-3. Added a "Compare two arrays" action to the Transform Data app.
+3. When the "eye" icon of a mapped action field is clicked, the mapped action is now highlighted in the list.
 
-4. In the graphical automation history, if an action log is viewed for an action that wasn't executed, a message appears instead of an error about the log not being found.
+4. When an automation is imported or deployed, its concurrency limit and other attributes that were present in the export are now loaded.
 
-5. Fixed a regression where the automation execution engine was not processing trigger records for automations having a Date Time trigger in combination with one or more other triggers.
+5. The Account Data screen can now be sorted by date.  Click the column title to change the sort direction.
 
-6. The automation editor and the graphical automation history now both display "AND" next to a Date Time trigger.
+6. The "Dump account data" option in the automation editor's dashboard gear menus under "Processing" has been moved to the dashboard's right click context menu, where the "Manage account data" menu option is located.
 
-7. Fixed an issue where database connections would be leaked when auto-retries were being performed for 401 errors returned by OAuth v2 APIs.
+7. The "Dump automation data" option in the automation editor's dashboard gear menus under "Processing" has been renamed to "Dump stored data", to mirror the "Inspect stored data" option.
 
-8. When comparing versions of an assembly in the assembly editor, after the diagram loads an error about overlapping modules is no longer displayed.
+8. The "Manage Account Data" and automation "Stored Data" screens have been both similarly redesigned so that the data can be sorted by date by clicking on the column header. Also, all columns can now be searched together via query fields at the top of each column.
 
-9. When a linked automation having a webhook trigger is redeployed, the system no longer flags the webhook trigger(s) as being unconfigured.
+9. Due to ActiveMQ consuming too much RAM, Hazelcast message queues are now being used instead.  A hidden system config flag is currently in place to switch between Hazelcast and ActiveMQ.  At some point ActiveMQ will be removed from the system if Hazelcast proves to be a better option.  Message queues are used to receive and route inbound webhooks for instant triggers.
 
-10. When an automation having a webhook trigger is redeployed, the destination automation's configured webhook URL that is displayed in the trigger settings is no longer overwritten with the webhook URL from the deployed automation.
+10. Hazelcast is upgraded to its latest v5.0 release.  As a result, its management console embedded into the Admin Console provides much improved functionality.
 
-11. If the system is configured to store logs in Amazon S3, when loading the log if an error is received from S3 the system now checks to see if the log can be loaded from the local filesystem.  This handles cases where the system has not yet written logs to S3.
+11. The system now has multilevel alert message mapping functionality.  Alert messages can be matched by regular expressions and replaced with alternate text.  The regex mappings can be defined at three levels in the system.  The lowest level is on individual automation triggers and actions via their right-click context menus.  Automation-level mappings are defined via their gear icons in the dashboard, under Processing -> Alert handling -> Alert mappings.  System-level mappings are defined in a new Alert Mappings screen.  The same UI is used to define mappings in all three places in the system.  See the provided help text in the screens for more information about this functionality.
 
-12. The Admin Console's "Retries" screen now has a button to cancel all scheduled retries.
+12. The system now includes the latest version of the Amazon AWS Java SDK for Java, v1.12.85.
 
-13. The system no longer automatically turns off automations if they encounter a missing app connection or receive a 401 unauthorized error from an API.  The original impetus for this logic was to avoid the system running abandoned automations or automations that had no chance to successfully process.  But this behavior was causing operational problems at scale, where many automations across accounts could be turned off due to API or system glitches.  Now, an automation must specifically have its "halt automation on any alert" setting enabled for it to be automatically turned off due to a processing error.
+13. Fixed an issue where the assembly editor would restore the previous session of saved tabs before the user responded to the dialog asking them to restore the session or not.
 
-14. The system now by default performs javascript string escaping for mapped fields in the System app's "evaluate javascript expression" action and uses a new JSON parser introduced in the previous release.  This functionality is controlled by hidden config flags and can be disabled if needed.
+14. Modified the recently added JSON parser so it throws exceptions when parsing invalid JSON, rather than converting the malformed JSON into valid JSON.
 
-15. When deploying automations and the "show linked accounts" checkbox is checked, the system no longer returns accounts that only have deleted automations in the group of automations being deployed.
+15. Fixed the Transform Date "modify and reformat date time" action so that when a Unix epoch time is input and the "timezone offset seconds" is set to either ACCOUNT or ACCOUNT_UTC the offset is now applied.
 
-16. When clicking a filtered data row in the automation history drilldown, the graphical history is now displayed instead of only a dialog with the filter information, so that the trigger's log can be inspected.
+16. Automation history can now be searched to find executed action step numbers within conditionals, allowing data to be searched by its processing path through automations having conditional logic.  Enter the action step number in the query field, without the leading "#".  Searching by executed action step numbers is only supported for newly processed data going forward.
 
-17. In the assembly editor, when searching for automations that use apps, triggers, and actions the search results are now ordered by automations that are turned on, then automation id numbers in descending order.  This puts automations that are turned on at the top of the list, with the list also sorted by newest automations first.
+17. The automation history screens have a new dropdown filter option to view successes and errors together.
 
-18. The Math Operation module has been deprecated and replaced with a copy whose only change is to specify the number of rounding decimal places in the body of the module instead of as a setting.  This allows the number of decimal places for rounding to be wired into the module.
+18. The automation history screens now show total counts of matching executions and data rows at the bottom of the screen.
 
-19. Added a "round" action to the Transform Number app that rounds numbers to the specified number of decimal places.
+19. In the automation builder, if one or more items are selected the right-click context menu will now show "disable selected items" or "enable selected items" based on the enabled/disabled state of the first selected item.
 
-20. The Admin Console's Work Queue screen now has an option to disable one or more apps.  This allows all automations using the app(s) to not be processed by the work queue.
+20. The 3rd-party ACE editor has been upgraded to its latest version.  This editor is primarily used for editing inline JSP/PHP code in assemblies.
 
-21. In the automation history screen, if an automation was queued but never processed by the system old entries in the history view now show a "queued but not executed" information entry instead of "queued for execution" which made it seem it was still queued for processing.
+21. The mouseover Input/Output data viewer popovers in the graphical automation history now use the code editor to view the data, primarily so that the data can now be searched.
 
-22. Have added a "configure UI" action to the Human Interaction app that can be used to configure UI elements in the moderation queue.  Each scope per automation can have its own configuration.  This action can only be used once in an automation.
+22. Automation logs no longer write the top-level assembly name with each line of output generated by modules.  Also, actions no longer dump the trigger data row being processed.  Instead, inspect the output of the trigger to view the data row being processed by actions.  These changes were made in order to reduce log storage space and associated costs.
 
-23. Added a "Find value in array" action to the Transform Data app.  Returns the total number of matches of a value in an array.
+23. The 3rd-party ChartJS library has been upgraded to its latest version.  This library is used to render the task history bar chart in the automation editor dashboard.
 
-24. The system now has functionality to snooze an automation for an extended period of time -- days, months, years.  The Date Time app now has a new "snooze automation" action.  It allows a date and time to be specified in the same manner as the Transform Date Time app, which includes natural language such as "in two days" or "next Friday at noon".  When the action is executed with a configured datetime in the future, the automation's execution is suspended and the automation exits the work queue.  The automation will continue at the next action after the snooze action either when the configured datetime is reached or when the snooze is manually cancelled in the automation's history.  All snoozed transactions can be manually woken up from the automation history at once via a single button, by choosing to filter for only snoozed transactions.  If the system is rebooted, any snoozed transactions that should have been executed while the system was offline are immediately placed into the work queue for processing while snoozed transactions scheduled to wake up in the future are placed into the scheduler.
+24. A group of action items can now be copy-pasted in the automation editor.  Right click on an action item and choose the "Select this and all items below" option.  Then right-click on the editor's background and choose the "copy selected items" option.  Then click a "+" icon destination and choose the "paste items" option.  The copied items can also be pasted into other automations and subroutines.
 
-25. The System app has a new "serialize automation execution" action.  The purpose of the action is to only allow one automation at a time to execute within a defined group and scope.  The group is specified by a name.  The scope can be either a single account or any account within a linked account group.  The action should be added as the first step of an automation.  The main usage of the new action is when automations are invoked via the "execute automation" action, especially when "wait to complete" is turned off, in order to avoid API rate limits caused by multiple automations running in parallel that all use the same connected API account.
+25. Automation conditional and assembly editor conditions for the "equals" and "not equals" operators now attempt to perform a numeric comparison rather than only a string comparison.  This fixes situations such as when "0" was not considered equal to "0.0".
 
-26. The list of executing automations in the Admin Console's work queue screen is now sorted in the order that automations began executing, rather than the list being randomly sorted (a side effect of Java data structure iteration).  This can make it easier to monitor a particular automation's processing in a busy system.  Also, the longest-running automations will now always be at the top of the list.
+26. The assembly editor has a new setting (in the Settings menu at the top right) that controls the scroll speed of the diagram when modules and wires are dragged.  The default speed of 1 is now slower than the previous speed of 3.
 
-27. The Date Time "pause for a specified number of seconds" action can now accept fractional seconds, e.g. 0.5 for 1/2 a second. When using it in a loop to slow down API calls a value of 1 second is typically too slow. Generally a value of 0.5 or 0.25 should be enough for most APIs to avoid rate limit errors.
+27. When automations are imported, if a new automation is being created then copies of all trigger and action settings are now made instead of the imported automation referring to the original trigger and action settings.
 
-28. The System app's "execute automation" action now has input fields to define a latch group and account scope, similar to the serialized execution group. With a latch group, a parent automation can execute multiple child automations all in the same group, with "wait to complete" set to false. Then the new System app "wait for latched automations" action can be used by the parent automation to wait for all the forked child automations running in parallel to complete their processing before performing additional steps.
+28. The Account Data, Two-Way Sync Data, and Automation Data screens in the automation editor no longer perform fuzzy matches when searching for column data.  Instead exact case-insensitive matching is now performed by default.  To perform wildcard matching, use asterisks in the search text.  These changes were made to improve performance.
 
-29. Accounts having the Assembly Developer or Switch Account permissions will now see a "Latch group..." gear menu option in the automation editor's dashboard.  This allows the newly added latch functionality to be utilized for automations invoked by polling or instant triggers.  The latch group assigned via the "execute automation" action takes precedence over the latch group assigned via the gear menu.
+29. When the system executes scheduled polling automations, it now waits a random period of time up to 15 seconds before actually placing the automation into the work queue.  This is to handle systems with many hundreds of polling automations, where the placing of them into the work queue was placing a high load on the system, especially the database.
 
-30. When automations are exported & imported or deployed, their attributes such as their concurrency limit and the newly added latch group are now copied.
+30. Fixed automation history so it won't show a status of "Queued for execution" when the automation really isn't in the work queue but rather was put into the queue and then was never executed, typically as a result of a system reboot.  In this case the history will show a status of "Queued but not executed".
 
-31. The account settings menu in the automation editor has a new setting to control the default error handling for actions added to automations, which can be either to halt on errors or to continue on non-critical errors.
+31. When editing an automation, if an action displayed an error about having unmapped fields and was deleted, the editor now allows the automation to be saved (assuming no other problems remain) rather than displaying an error message about an action having missing field mappings.
 
-32. If an automation having an instant trigger that requires a unique URL is published to another server (typically a production server in a dev-prod arrangement), any instant triggers requiring unique URL's then become locked and cannot be removed from the automation in the source system (typically the development system).  This is done to avoid the scenario where live automations in the production system would stop processing received webhook payloads if the development automation was later edited and the instant trigger was removed and replaced.
+32. Worked around a UI framework bug in the automation editor that would cause the list of action field mappings to not be fully scrollable, instead it would infinitely scroll on the same fields when about halfway down the list.  The problem only occurred when configuring actions that had lots of fields dynamically fetched via the "Fetch data fields..." button.
 
-33. After the assembly editor catalog is refreshed, the vertical scrolling no longer jumps around as the catalog is scrolled.
+33. The automation history screens (not the graphical history) have a right-click context menu option to export the viewed data as a CSV file.
 
-34. Pressing the Escape key will now close the topmost dialog window, unless the dialog contains a text editor and the text editor has focus.
+34. The top-level automation history screen has a new right-click context menu option to export the viewed data plus the related data rows (that would be accessed in the next drill-down screen) as a CSV file.
 
-35. Fixed the "Download log" button in the automation editor's graphical history so that the log will actually be downloaded instead of a pop-up window opening and closing without the log being downloaded.
+35. In the automation builder, when using the "find items mapped to this" functionality (by right-clicking on triggers and actions) the editor now shows navigation buttons to select each mapped item and to automatically scroll it into view.
 
-36. The automation task history screen headers now show the countdown timer until the next execution for polling automations that are turned on.  Automations that only have instant triggers or ones that are turned off show a corresponding message.
+36. When automations are imported in the automation editor's dashboard, if a folder is selected the imported automations will be placed into that folder.
 
-37. If an automation's name starts with "ADMIN" (case sensitive) and the signed-in account does not have the "Switch Account" permission, the automation will not display its on/off switch or its gear menu in the dashboard.
+37. The Data Rows - Loop and Data Rows - Conditional Loop modules now have a delay setting to pause for a specified number of milliseconds between iterations.  The reason for adding is for embedded HTTP modules where too many iterations too quickly can cause API rate limit errors.
 
-38. When the automation editor's dashboard is initially loaded, inactive automations are now sorted by name per the default ordering.
+38. Extensive caching is now performed by the server to optimize performance and reduce database load.
 
-39. When deploying automations, the deployment dialog now displays the total number of selected accounts in its title bar and in the action button text.
+39. When using the Delete All functionality in the Account Data and Automation Data screens in the automation editor, the delete confirmation dialog now requires doing a long-press of the button in order to confirm the delete b/c it is a destructive delete that cannot be undone.
 
-40. Added a "dump items from bucket" action to the system's Collector app, which will output the items in the bucket as a single array element.
+40. The Collector "dump items from bucket" action now dumps items in the order they were stored.
 
-41. The automation editor will now display an alert if more than one account is editing the same automation at the same time.  This can happen when multiple system admins have switched to the same account.
-
-42. After an edit has been made to an automation, a "keep for later" button now appears in the screen's header.  This button is equivalent to an immediate auto-save and the closing of the editor, allowing the edit session to be paused and resumed later.
-
-43. The assembly editor's "File" menu at the top right now has a "keep for later" menu option.  This option is equivalent to an immediate auto-save and the closing of the assembly tab, allowing the edit session to be paused and resumed later.
-
-44. When editing automation field mappings, clicking the "eye" icon in a mapped field now opens the list of mappable fields and filters the list to show the mapped action, scrolling it into view if necessary.  Double-clicking the eye icon now performs the previous functionality of opening the automation diagram and highlighting the mapped action.
-
-45. Fixed an issue where the system could end up deleting automation log files on the filesystem and in Amazon S3 before they should have been pruned according to their age.
-
-46. Fixed an issue where the "execute automation" action, when configured to wait until completion, would time out according to the system's HTTP socket timeout setting instead of waiting as long as needed for the automation to complete.
-
-47. When the system displays a duration of time, it is now broken down into days, hours, minutes, and seconds (e.g. 1d 2h 3min 4sec 5ms) rather than being displayed in milliseconds.
-
-48. When a search is performed in the automation editor for action or field mappings, if any results are found a new entry field for entering replacement text is displayed.  Entering replacement text will replace all exact matches (case sensitive) of either action names or mapped field names, depending on the selected search option.
-
-49. Fixed an issue with the automation execution engine where a disabled action as the last step of a conditional branch nested within an outer loop would cause an infinite loop.
-
-50. Fixed conditionals in the automation editor such that their name text won't wrap past their bottom branch flow lines.
+41. There is a new "Copy step number" right-click context menu option when clicking on items in automation editor diagrams, both when editing automations and when viewing the graphical automation history.  This is useful when needing to search automation history to find where a certain conditional path is taken.  
